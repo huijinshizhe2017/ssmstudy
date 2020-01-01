@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.surpass.cache.dao.IUserDao">
+
+    <cache/>
+    <!--配置查询所有-->
+    <select id="findAll" resultType="cn.surpass.domain.User">
+        select * from user
+    </select>
+
+    <select id="findById" parameterType="int" resultType="cn.surpass.domain.User" useCache="true">
+        select * from user where id=#{value}
+    </select>
+
+    <update id="updateUser" parameterType="cn.surpass.domain.User">
+        update user set username = #{username} where id = #{id}
+    </update>
+
+</mapper>

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<!--mybatis的主配置文件-->
+<configuration>
+
+    <properties resource="jdbcConfig.properties"/>
+    <settings>
+        <setting name="lazyLoadingEnabled" value="true"/>
+        <setting name="aggressiveLazyLoading" value="false"/>
+    </settings>
+    
+    <typeAliases>
+        <typeAlias type="cn.surpass.domain.User" alias="user"/>
+        <!--指定实体类-->
+    </typeAliases>
+
+    <!--配置环境-->
+    <environments default="mysql">
+        <!--配置环境-->
+        <environment id="mysql">
+            <!--配置事务类型-->
+            <transactionManager type="JDBC"></transactionManager>
+            <dataSource type="POOLED">
+                <!--配置连接数据库的基本信息-->
+                <property name="driver" value="${jdbc.driver}"/>
+                <property name="url" value="${jdbc.url}"/>
+                <property name="username" value="${jdbc.username}"/>
+                <property name="password" value="${jdbc.password}"/>
+            </dataSource>
+        </environment>
+    </environments>
+
+    <!--指定映射配置文件的位置，映射配置文件指的是每个独立的配置文件-->
+    <mappers>
+        <!--package标签用于指定Dao接口所在的包，党制定了之后就不需要再写mapper以及resource或者class了-->
+        <package name="cn.surpass.curd.dao"/>
+        <package name="cn.surpass.result.dao"/>
+        <package name="cn.surpass.xml.dao"/>
+        <package name="cn.surpass.customdao.dao"/>
+        <package name="cn.surpass.anno.dao"/>
+        <package name="cn.surpass.defsql.dao"/>
+        <package name="cn.surpass.manyone.dao"/>
+        <package name="cn.surpass.lazy.dao"/>
+        <package name="cn.surpass.cache.dao"/>
+        <!--<mapper class="cn.surpass.xml.dao.IUserDao"/>-->
+        <!--<mapper resource="cn/surpass/xml/dao/IUserDao.xml"/>-->
+        <!--<mapper resource="cn/surpass/customdao/dao/IUserDao.xml"/>-->
+        <!--<mapper class="cn.surpass.anno.dao.IUserDao"/>-->
+        <!--<mapper resource="cn/surpass/curd/dao/IUserDao.xml"/>-->
+        <!--<mapper resource="cn/surpass/result/dao/IUserDao.xml"/>-->
+
+
+    </mappers>
+</configuration>

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.surpass.defsql.dao.IUserDao">
+
+    <sql id="default">
+        select * from user
+    </sql>
+    <!--配置查询所有-->
+    <select id="findAll" resultType="cn.surpass.domain.User">
+        select * from user
+    </select>
+
+    <select id="findUserById" parameterType="Integer" resultType="cn.surpass.domain.User">
+        select * from user where id=#{value}
+    </select>
+
+
+    <select id="findUsersByUsername" parameterType="String" resultType="cn.surpass.domain.User">
+        select * from user where username like '%${value}%'
+    </select>
+
+    <select id="findUserByVo" parameterType="cn.surpass.domain.QueryVo" resultType="cn.surpass.domain.User">
+        select * from user where username like '%${user.username}%'
+    </select>
+
+    <!--<select id="findUserByCondition" parameterType="cn.surpass.defsql.domain.User" resultType="cn.surpass.defsql.domain.User">-->
+        <!--select * from user where 1=1-->
+        <!--<if test="username != null">-->
+            <!--and username = #{username}-->
+        <!--</if>-->
+
+        <!--<if test="sex != null">-->
+            <!--and sex = #{sex}-->
+        <!--</if>-->
+
+    <!--</select>-->
+
+    <select id="findUserByCondition" parameterType="cn.surpass.domain.User" resultType="cn.surpass.domain.User">
+        select * from user
+        <where>
+            <if test="username != null">
+                and username = #{username}
+            </if>
+
+            <if test="sex != null">
+                and sex = #{sex}
+            </if>
+        </where>
+    </select>
+
+    <select id="findUsersByVoInIds" parameterType="cn.surpass.domain.QueryVoDef" resultType="cn.surpass.domain.User">
+        select * from user
+        <where>
+            <if test="ids != null and ids.size()>0">
+                <foreach collection="ids" open="id in (" close=")" separator="," item="id">
+                        #{id}
+                </foreach>
+            </if>
+
+        </where>
+
+
+
+    </select>
+
+</mapper>

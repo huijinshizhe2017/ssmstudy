@@ -27,7 +27,7 @@ import org.apache.ibatis.session.defaults.DefaultSqlSessionFactory;
 
 /**
  * Builds {@link SqlSession} instances.
- *
+ * 典型的构造者设计模式，用于构造出复杂的{@link SqlSessionFactory}对象
  * @author Clinton Begin
  */
 public class SqlSessionFactoryBuilder {
@@ -88,6 +88,12 @@ public class SqlSessionFactoryBuilder {
     }
   }
 
+  /**
+   * 这里使用默认的SqlSessionFactory,{@link DefaultSqlSessionFactory}
+   * 在Mybatis中，实现SqlSessionFactory的有两个类，另外一个是{@link SqlSessionManager}
+   * @param config
+   * @return
+   */
   public SqlSessionFactory build(Configuration config) {
     return new DefaultSqlSessionFactory(config);
   }

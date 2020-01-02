@@ -40,12 +40,16 @@ public class Resources {
    */
   private static Charset charset;
 
+  /**
+   * 作为一个工具类，构造方法要变成default或者私有。
+   */
   Resources() {
   }
 
   /**
    * Returns the default classloader (may be null).
-   *
+   * 得到默认的类加载器，有可能为空。如果在{@linkplain #setDefaultClassLoader(ClassLoader)}方法没有被调用或者
+   * 传入参数为空的时候返回的类加载器就为空。
    * @return The default classloader
    */
   public static ClassLoader getDefaultClassLoader() {
@@ -54,7 +58,7 @@ public class Resources {
 
   /**
    * Sets the default classloader
-   *
+   * 设置默认的类加载器
    * @param defaultClassLoader - the new default ClassLoader
    */
   public static void setDefaultClassLoader(ClassLoader defaultClassLoader) {
@@ -63,7 +67,7 @@ public class Resources {
 
   /**
    * Returns the URL of the resource on the classpath
-   *
+   * 通过资源路径获取URL
    * @param resource The resource to find
    * @return The resource
    * @throws java.io.IOException If the resource cannot be found or read
@@ -75,7 +79,8 @@ public class Resources {
 
   /**
    * Returns the URL of the resource on the classpath
-   *
+   * 通过指定的类加载器和资源路径获取URL
+   * 这里就体现出指定类加载器的作用了。
    * @param loader   The classloader used to fetch the resource
    * @param resource The resource to find
    * @return The resource
@@ -91,7 +96,7 @@ public class Resources {
 
   /**
    * Returns a resource on the classpath as a Stream object
-   *
+   * 将指定的资源作为一个输入流返回
    * @param resource The resource to find
    * @return The resource
    * @throws java.io.IOException If the resource cannot be found or read
@@ -102,6 +107,9 @@ public class Resources {
 
   /**
    * Returns a resource on the classpath as a Stream object
+   * 指定类加载器去获取一个输入流。
+   * 需要注意的是，这里如果指定类加载器没有响应的资源，则会按照一定的顺序访问资源,顺序参见如下类：
+   * {@linkplain ClassLoaderWrapper#getClassLoaders(ClassLoader)}
    *
    * @param loader   The classloader used to fetch the resource
    * @param resource The resource to find
@@ -118,7 +126,7 @@ public class Resources {
 
   /**
    * Returns a resource on the classpath as a Properties object
-   *
+   * 通过资源路径获取属性对象
    * @param resource The resource to find
    * @return The resource
    * @throws java.io.IOException If the resource cannot be found or read

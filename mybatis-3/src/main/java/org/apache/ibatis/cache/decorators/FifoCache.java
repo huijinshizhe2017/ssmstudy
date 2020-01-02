@@ -22,7 +22,9 @@ import org.apache.ibatis.cache.Cache;
 
 /**
  * FIFO (first in, first out) cache decorator.
- *
+ *  列队形式缓冲
+ *  使用委派的设计模式，本省不保存缓冲数据，只保存缓冲的key，正常保存的缓冲数据在委派的Cache实现中，
+ *  这里主要通过列队的形式保证缓冲的个数恒定，默认为1024个。
  * @author Clinton Begin
  */
 public class FifoCache implements Cache {

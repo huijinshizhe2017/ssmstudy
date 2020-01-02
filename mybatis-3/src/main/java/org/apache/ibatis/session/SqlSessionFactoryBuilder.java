@@ -72,9 +72,19 @@ public class SqlSessionFactoryBuilder {
     return build(inputStream, null, properties);
   }
 
+  /**
+   * 构建SqlSessionFactory对象，这里用到创建者的设计模式。
+   * @param inputStream SqlMapConfig的配置文件输入流
+   * @param environment 环境参数
+   * @param properties 自定义属性
+   * @return
+   */
   public SqlSessionFactory build(InputStream inputStream, String environment, Properties properties) {
     try {
+      //配置信息的构建者
       XMLConfigBuilder parser = new XMLConfigBuilder(inputStream, environment, properties);
+      //构建SqlSessionFactory
+      //parser.parse()实现对于Configuration的封装
       return build(parser.parse());
     } catch (Exception e) {
       throw ExceptionFactory.wrapException("Error building SqlSession.", e);

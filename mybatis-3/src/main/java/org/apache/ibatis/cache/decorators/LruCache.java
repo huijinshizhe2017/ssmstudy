@@ -22,7 +22,10 @@ import org.apache.ibatis.cache.Cache;
 
 /**
  * Lru (least recently used) cache decorator.
- *
+ * 最近使用的装饰者缓冲数据。这里用到LinkedHashMap实现。
+ * 需要注意的是，这里通过重写LinkedHashMap的removeEldestEntry方法决定插入元素后是否有元素被删除。
+ * 这里使用到的是模版方法的设计模式。这也是LinkedHashMap设计上的一大亮点。
+ * {@linkplain LinkedHashMap#removeEldestEntry(Map.Entry)}
  * @author Clinton Begin
  */
 public class LruCache implements Cache {

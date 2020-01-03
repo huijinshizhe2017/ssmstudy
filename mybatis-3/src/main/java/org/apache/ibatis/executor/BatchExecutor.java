@@ -37,6 +37,7 @@ import org.apache.ibatis.transaction.Transaction;
 
 /**
  * @author Jeff Butler
+ * 批处理执行器
  */
 public class BatchExecutor extends BaseExecutor {
 
@@ -44,7 +45,15 @@ public class BatchExecutor extends BaseExecutor {
 
   private final List<Statement> statementList = new ArrayList<>();
   private final List<BatchResult> batchResultList = new ArrayList<>();
+
+  /**
+   * 当前的Sql
+   */
   private String currentSql;
+
+  /**
+   * 当前的执行器
+   */
   private MappedStatement currentStatement;
 
   public BatchExecutor(Configuration configuration, Transaction transaction) {
@@ -62,13 +71,15 @@ public class BatchExecutor extends BaseExecutor {
       int last = statementList.size() - 1;
       stmt = statementList.get(last);
       applyTransactionTimeout(stmt);
-      handler.parameterize(stmt);//fix Issues 322
+      //fix Issues 322
+      handler.parameterize(stmt);
       BatchResult batchResult = batchResultList.get(last);
       batchResult.addParameterObject(parameterObject);
     } else {
       Connection connection = getConnection(ms.getStatementLog());
       stmt = handler.prepare(connection, transaction.getTimeout());
-      handler.parameterize(stmt);    //fix Issues 322
+      //fix Issues 322
+      handler.parameterize(stmt);
       currentSql = sql;
       currentStatement = ms;
       statementList.add(stmt);
@@ -108,21 +119,36 @@ public class BatchExecutor extends BaseExecutor {
     return cursor;
   }
 
+  /**
+   * 刷新执行器
+   * @param isRollback 是否回滚
+   * @return 批量执行的结果集
+   * @throws SQLException Sql执行异常
+   */
   @Override
   public List<BatchResult> doFlushStatements(boolean isRollback) throws SQLException {
     try {
+      //下面一行代码是否应该移动到if的下面
       List<BatchResult> results = new ArrayList<>();
+      //如果是回滚，则返回空的批处理集合
       if (isRollback) {
         return Collections.emptyList();
       }
+
+      //遍历每个执行器
       for (int i = 0, n = statementList.size(); i < n; i++) {
         Statement stmt = statementList.get(i);
+        //应用事务超时时间
+        //决定是否为执行器设置超时事务的超时时间
         applyTransactionTimeout(stmt);
+        //得到批处理结果
         BatchResult batchResult = batchResultList.get(i);
         try {
+          //设置批处理当前更新的个数
           batchResult.setUpdateCounts(stmt.executeBatch());
           MappedStatement ms = batchResult.getMappedStatement();
           List<Object> parameterObjects = batchResult.getParameterObjects();
+          //或者Key的生成器
           KeyGenerator keyGenerator = ms.getKeyGenerator();
           if (Jdbc3KeyGenerator.class.equals(keyGenerator.getClass())) {
             Jdbc3KeyGenerator jdbc3KeyGenerator = (Jdbc3KeyGenerator) keyGenerator;
@@ -133,6 +159,7 @@ public class BatchExecutor extends BaseExecutor {
             }
           }
           // Close statement to close cursor #1109
+          //关闭执行器
           closeStatement(stmt);
         } catch (BatchUpdateException e) {
           StringBuilder message = new StringBuilder();
@@ -152,11 +179,15 @@ public class BatchExecutor extends BaseExecutor {
       }
       return results;
     } finally {
+      //最终需要关闭执行器
       for (Statement stmt : statementList) {
         closeStatement(stmt);
       }
+      //当前Sql置空
       currentSql = null;
+      //执行器列表清空
       statementList.clear();
+      //批处理结果集清空
       batchResultList.clear();
     }
   }

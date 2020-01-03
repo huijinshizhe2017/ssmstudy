@@ -17,7 +17,26 @@ package org.apache.ibatis.mapping;
 
 /**
  * @author Clinton Begin
+ * 执行器的类型
+ * Statement继承自Wrapper、PreparedStatement继承自Statement、CallableStatement继承自PreparedStatement。
  */
 public enum StatementType {
-  STATEMENT, PREPARED, CALLABLE
+
+  /**
+   *Statement接口提供了执行语句和获取结果的基本方法；
+   * {@link java.sql.Statement}
+   */
+  STATEMENT,
+
+  /**
+   * 接口添加了处理 IN 参数的方法；
+   *{@link java.sql.PreparedStatement}
+   */
+  PREPARED,
+
+  /**
+   * 接口添加了处理 OUT 参数的方法。
+   *{@link java.sql.CallableStatement}
+   */
+  CALLABLE
 }

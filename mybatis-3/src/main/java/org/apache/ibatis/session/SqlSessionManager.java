@@ -31,16 +31,24 @@ import org.apache.ibatis.reflection.ExceptionUtil;
 
 /**
  * @author Larry Meadors
+ *
  */
 public class SqlSessionManager implements SqlSessionFactory, SqlSession {
 
   private final SqlSessionFactory sqlSessionFactory;
+  /**
+   * 代理
+   */
   private final SqlSession sqlSessionProxy;
 
+  /**
+   * 本地线程
+   */
   private final ThreadLocal<SqlSession> localSqlSession = new ThreadLocal<>();
 
   private SqlSessionManager(SqlSessionFactory sqlSessionFactory) {
     this.sqlSessionFactory = sqlSessionFactory;
+    //SqlSession的代理对象
     this.sqlSessionProxy = (SqlSession) Proxy.newProxyInstance(
         SqlSessionFactory.class.getClassLoader(),
         new Class[]{SqlSession.class},
@@ -288,6 +296,10 @@ public class SqlSessionManager implements SqlSessionFactory, SqlSession {
     sqlSession.commit();
   }
 
+  /**
+   * 是否强制提交
+   * @param force forces connection commit
+   */
   @Override
   public void commit(boolean force) {
     final SqlSession sqlSession = localSqlSession.get();
@@ -342,9 +354,22 @@ public class SqlSessionManager implements SqlSessionFactory, SqlSession {
         // Prevent Synthetic Access
     }
 
+    /**
+     * 这个方法是通过CGLib动态生成代理对象，通过此方法，实现了方法的执行并自动提交或者回滚。
+     * 当然，如果本地线程的SqlSession如果为null，则会创建一个SqlSession
+     * @param proxy 被代理的对象
+     * @param method 被调用的方法
+     * @param args 调用方法使用的参数
+     * @return 执行结果
+     * @throws Throwable
+     */
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
       final SqlSession sqlSession = SqlSessionManager.this.localSqlSession.get();
+
+      //这里想一下为什么SqlSession不为null的情况下，不会自动提交
+      //这里主要和事务的隔离级别有关。如果当前线程的SqlSession不为null,则说明有其他程序正在执行，所以这里不会自动关闭。
+      //这里是多线程的考虑
       if (sqlSession != null) {
         try {
           return method.invoke(sqlSession, args);
@@ -352,12 +377,15 @@ public class SqlSessionManager implements SqlSessionFactory, SqlSession {
           throw ExceptionUtil.unwrapThrowable(t);
         }
       } else {
+        //通过JDK7的新特性实现资源在trycatch之后自动释放。
         try (SqlSession autoSqlSession = openSession()) {
           try {
             final Object result = method.invoke(autoSqlSession, args);
+            //自动提交
             autoSqlSession.commit();
             return result;
           } catch (Throwable t) {
+            //抛异常则事务回滚
             autoSqlSession.rollback();
             throw ExceptionUtil.unwrapThrowable(t);
           }

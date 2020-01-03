@@ -24,18 +24,28 @@ import org.apache.ibatis.cursor.Cursor;
 import org.apache.ibatis.executor.BatchResult;
 
 /**
+ * 在Mybatis工作的主要Java接口。通过这个接口，我们可以执行命令、获取Mapper和管理事务。
  * The primary Java interface for working with MyBatis.
  * Through this interface you can execute commands, get mappers and manage transactions.
  *
+ * 在 mybatis中，SqlSession的实现类有两个，其中SqlSessionManager类不但实现了SqlSession接口，
+ * 同时也实现了SqlSessionFactory接口。那么SqlSessionManager类究竟有何作用 ?
+ * 由于源码中缺少注释，所以从mybatis目前的提供官方文档来看，似乎该类已被弃用，
+ * 其功能被DefaultSqlSession类和DefaultSqlSessionFactory类所代替。
+ * 只是该类的部分代码对我们理解mybatis的一些底层机制还具有一定的参考价值。
+ * {@link SqlSessionManager}
+ *
+ * 这里实现了{@link Closeable},可以利用jdk7的try-catch新特性关闭资源
  * @author Clinton Begin
  */
 public interface SqlSession extends Closeable {
 
   /**
    * Retrieve a single row mapped from the statement key.
-   * @param <T> the returned object type
-   * @param statement
-   * @return Mapped object
+   * 从语句的检索单一行映射。
+   * @param <T> the returned object type 返回对象的类型
+   * @param statement 传入的执行器
+   * @return Mapped object 返回的对象映射
    */
   <T> T selectOne(String statement);
 

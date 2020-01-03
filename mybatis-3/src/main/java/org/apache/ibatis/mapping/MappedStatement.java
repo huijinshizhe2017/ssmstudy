@@ -35,26 +35,92 @@ public final class MappedStatement {
 
   private String resource;
   private Configuration configuration;
+  /**
+   * Sql id
+   */
   private String id;
+
+  /**
+   * 尝试影响驱动程序每次批量返回的结果行数和这个设置值相等
+   */
   private Integer fetchSize;
+
+  /**
+   * SQL超时时间
+   */
   private Integer timeout;
+
+  /**
+   * Statement的类型，STATEMENT/PREPARE/CALLABLE
+   */
   private StatementType statementType;
+
+  /**
+   * 结果集类型，FORWARD_ONLY/SCROLL_SENSITIVE/SCROLL_INSENSITIVE
+   */
   private ResultSetType resultSetType;
+
+  /**
+   * 表示解析出来的SQL
+   */
   private SqlSource sqlSource;
+
+  //缓存
   private Cache cache;
+
+  /**
+   * 参数Map
+   */
   private ParameterMap parameterMap;
+
+  /**
+   * 对应的ResultMap
+   */
   private List<ResultMap> resultMaps;
+
+  /**
+   * 是否需要刷新缓存
+   */
   private boolean flushCacheRequired;
+
+  /**
+   * 是否使用缓存
+   */
   private boolean useCache;
+
+  /**
+   * 结果是否排序
+   */
   private boolean resultOrdered;
+
+  /**
+   * SQL类型，INSERT/SELECT/DELETE
+   * Sql命令的类型,取决于Mapper的Xml标签或者注解
+   */
   private SqlCommandType sqlCommandType;
+
+  /**
+   * 代码生成器
+   */
   private KeyGenerator keyGenerator;
+
+  /**
+   *
+   */
   private String[] keyProperties;
   private String[] keyColumns;
   private boolean hasNestedResultMaps;
+
+  /**
+   * 数据库ID，用来区分不同环境
+   */
   private String databaseId;
   private Log statementLog;
   private LanguageDriver lang;
+
+  /**
+   * 多结果集时
+   */
   private String[] resultSets;
 
   MappedStatement() {

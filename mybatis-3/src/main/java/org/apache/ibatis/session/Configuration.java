@@ -310,10 +310,11 @@ public class Configuration {
   protected final Collection<ResultMapResolver> incompleteResultMaps = new LinkedList<>();
   protected final Collection<MethodResolver> incompleteMethods = new LinkedList<>();
 
-  /*
+  /**
    * A map holds cache-ref relationship. The key is the namespace that
    * references a cache bound to another namespace and the value is the
    * namespace which the actual cache is bound to.
+   * Map拥有缓存-引用关系。key是引用绑定到另一个命名空间的缓存的命名空间，而值是实际缓存绑定到的命名空间。
    */
   protected final Map<String, String> cacheRefMap = new HashMap<>();
 
@@ -386,6 +387,10 @@ public class Configuration {
     languageRegistry.register(RawLanguageDriver.class);
   }
 
+  /**
+   * 设置日志的前缀，这里主要区分是Mybatis
+   * @return
+   */
   public String getLogPrefix() {
     return logPrefix;
   }
@@ -394,10 +399,18 @@ public class Configuration {
     this.logPrefix = logPrefix;
   }
 
+  /**
+   * 获得日志实现的类型
+   * @return
+   */
   public Class<? extends Log> getLogImpl() {
     return logImpl;
   }
 
+  /**
+   * 设置日志的实现
+   * @param logImpl
+   */
   public void setLogImpl(Class<? extends Log> logImpl) {
     if (logImpl != null) {
       this.logImpl = logImpl;
@@ -534,6 +547,10 @@ public class Configuration {
     return proxyFactory;
   }
 
+  /**
+   * 设置代理工厂,如果传递为null,则使用JavassistProxyFactory
+   * @param proxyFactory
+   */
   public void setProxyFactory(ProxyFactory proxyFactory) {
     if (proxyFactory == null) {
       proxyFactory = new JavassistProxyFactory();
@@ -664,6 +681,7 @@ public class Configuration {
   /**
    * Set a default {@link TypeHandler} class for {@link Enum}.
    * A default {@link TypeHandler} is {@link org.apache.ibatis.type.EnumTypeHandler}.
+   * 设置默认的类型转换器
    * @param typeHandler a type handler class for {@link Enum}
    * @since 3.4.5
    */
@@ -719,6 +737,10 @@ public class Configuration {
     return languageRegistry;
   }
 
+  /**
+   *
+   * @param driver
+   */
   public void setDefaultScriptingLanguage(Class<? extends LanguageDriver> driver) {
     if (driver == null) {
       driver = XMLLanguageDriver.class;

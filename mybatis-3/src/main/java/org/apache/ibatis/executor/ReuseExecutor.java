@@ -38,12 +38,33 @@ import org.apache.ibatis.transaction.Transaction;
  */
 public class ReuseExecutor extends BaseExecutor {
 
+  /**
+   * 这个变量是本类的关键所在，用于存放执行器的缓冲
+   * key:执行的sql
+   * value:执行的执行器
+   */
   private final Map<String, Statement> statementMap = new HashMap<>();
 
   public ReuseExecutor(Configuration configuration, Transaction transaction) {
     super(configuration, transaction);
   }
 
+  /**
+   * 这里体现缓冲的思想，程序执行最终并没有关闭执行器
+   * 可以参照{@link SimpleExecutor#doUpdate(MappedStatement, Object)}
+   *
+   * eg:
+   *    try{
+   *        ...
+   *    }finally{
+   *        closeStatement(stmt);
+   *    }
+   *
+   * @param ms 映射状态对象
+   * @param parameter 参数对象
+   * @return 更新类型
+   * @throws SQLException Sql问题
+   */
   @Override
   public int doUpdate(MappedStatement ms, Object parameter) throws SQLException {
     Configuration configuration = ms.getConfiguration();
@@ -68,27 +89,50 @@ public class ReuseExecutor extends BaseExecutor {
     return handler.queryCursor(stmt);
   }
 
+  /**
+   * @param isRollback
+   *          这里对于ReuseExecutor和SimpleExecutor没有作用
+   *          只是在BatchExecutor起作用
+   * @return 批处理结果
+   */
   @Override
   public List<BatchResult> doFlushStatements(boolean isRollback) {
+    //关闭缓冲中的所有执行器
     for (Statement stmt : statementMap.values()) {
       closeStatement(stmt);
     }
+    //清空缓冲
     statementMap.clear();
+    //返回空的批处理集合
     return Collections.emptyList();
   }
 
+  /**
+   * 准备执行器，通过{@link #hasStatementFor(String)}判断是否有缓存，
+   * 如果有则继续使用缓冲，负责执行过程和SimpleExecutor的此方法一致。
+   * @param handler 状态处理器
+   * @param statementLog 状态日志
+   * @return 通过StatementHandler创建的执行器
+   * @throws SQLException Sql异常
+   */
   private Statement prepareStatement(StatementHandler handler, Log statementLog) throws SQLException {
     Statement stmt;
     BoundSql boundSql = handler.getBoundSql();
     String sql = boundSql.getSql();
+
+    //是否有缓存
     if (hasStatementFor(sql)) {
       stmt = getStatement(sql);
+      //设置事务的超时时间
       applyTransactionTimeout(stmt);
     } else {
+      //如果么有直接创建
       Connection connection = getConnection(statementLog);
       stmt = handler.prepare(connection, transaction.getTimeout());
+      //将sql和执行器保存到statementMap
       putStatement(sql, stmt);
     }
+    //处理执行器的参数化
     handler.parameterize(stmt);
     return stmt;
   }

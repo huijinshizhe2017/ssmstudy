@@ -17,6 +17,11 @@ package org.apache.ibatis.scripting.xmltags;
 
 /**
  * @author Clinton Begin
+ * Sql的Node节点，主要实现包括
+ *     ChooseSqlNode|ForEachSqlNode|IfSqlNode|MixedSqlNode|SetSqlNode|WhereSqlNode
+ *     这里面的实现主要针对MapperXml文件中的Sql中的不同的标签。
+ *     其中，SetSqlNode和WhereSqlNode实现的功能一致，所以采用共有的父类TrimSqlNode.
+ *     MixedSqlNode为混合SqlNode,通过contents集合存放多个SqlNode.
  */
 public interface SqlNode {
   boolean apply(DynamicContext context);

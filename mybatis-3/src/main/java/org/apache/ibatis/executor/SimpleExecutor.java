@@ -40,6 +40,14 @@ public class SimpleExecutor extends BaseExecutor {
     super(configuration, transaction);
   }
 
+  /**
+   * 这里在执行sql结束后直接关闭执行器
+   * 可以参照{@link ReuseExecutor#doUpdate(MappedStatement, Object)}
+   * @param ms
+   * @param parameter
+   * @return
+   * @throws SQLException
+   */
   @Override
   public int doUpdate(MappedStatement ms, Object parameter) throws SQLException {
     Statement stmt = null;
@@ -78,9 +86,17 @@ public class SimpleExecutor extends BaseExecutor {
 
   @Override
   public List<BatchResult> doFlushStatements(boolean isRollback) {
+    //返回空的批处理集合
     return Collections.emptyList();
   }
 
+  /**
+   * 这里没有进行判断，直接创建
+   * @param handler
+   * @param statementLog
+   * @return
+   * @throws SQLException
+   */
   private Statement prepareStatement(StatementHandler handler, Log statementLog) throws SQLException {
     Statement stmt;
     Connection connection = getConnection(statementLog);

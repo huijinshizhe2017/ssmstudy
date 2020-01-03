@@ -19,13 +19,22 @@ import java.sql.Connection;
 
 /**
  * Creates an {@link SqlSession} out of a connection or a DataSource
- *
+ * 创建一个SqlSession的连接或者数据源
+ * 在这个接口主要包含两类型的方法，一个是打开Session,一个是获取配置文件。
+ * 实现这个接口的主要有两个类，包括{@link SqlSessionManager} 和{@link org.apache.ibatis.session.defaults.DefaultSqlSessionFactory}
+ * 按照官方的解释，{@link SqlSessionManager}已经被废弃
  * @author Clinton Begin
  */
 public interface SqlSessionFactory {
 
+
   SqlSession openSession();
 
+  /**
+   * 设置是否自动提交来构建SqlSession
+   * @param autoCommit
+   * @return
+   */
   SqlSession openSession(boolean autoCommit);
 
   SqlSession openSession(Connection connection);
@@ -36,10 +45,20 @@ public interface SqlSessionFactory {
 
   SqlSession openSession(ExecutorType execType, boolean autoCommit);
 
+  /**
+   * 通过传入执行类型和设置事务的隔离级别打开Session对象
+   * @param execType 执行器类型(SIMPLE|REUSE|BATCH)
+   * @param level 事务隔离级别
+   * @return
+   */
   SqlSession openSession(ExecutorType execType, TransactionIsolationLevel level);
 
   SqlSession openSession(ExecutorType execType, Connection connection);
 
+  /**
+   * 获取配置对象
+   * @return
+   */
   Configuration getConfiguration();
 
 }

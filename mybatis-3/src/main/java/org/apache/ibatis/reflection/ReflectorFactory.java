@@ -15,6 +15,10 @@
  */
 package org.apache.ibatis.reflection;
 
+/**
+ * 反射工厂，主要通过设置是否可以缓冲获取反射对象。
+ * 目前实现此接口的类主要为{@link DefaultReflectorFactory},CustomReflectorFactory是一个空实现，没有实际的作用。
+ */
 public interface ReflectorFactory {
 
   boolean isClassCacheEnabled();

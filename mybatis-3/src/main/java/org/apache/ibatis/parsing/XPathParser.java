@@ -41,15 +41,37 @@ import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
 /**
+ * XPath解析器
  * @author Clinton Begin
  * @author Kazuki Shimizu
  */
 public class XPathParser {
 
+  /**
+   * Xml的文档对象
+   * 通过传入的Xml(字符串、InputStrem或者Reader构建Xml Document对象
+   */
   private final Document document;
+
+  /**
+   * 是否需要验证
+   * 通过代码查看，默认是false的。也就是不需要验证Xml的合法性
+   */
   private boolean validation;
+
+  /**
+   * 实体解析器
+   */
   private EntityResolver entityResolver;
+
+  /**
+   * 变量属性
+   */
   private Properties variables;
+
+  /**
+   * xPath对象
+   */
   private XPath xpath;
 
   public XPathParser(String xml) {
@@ -227,6 +249,11 @@ public class XPathParser {
     }
   }
 
+  /**
+   * 通过输入流构建Document对象
+   * @param inputSource
+   * @return
+   */
   private Document createDocument(InputSource inputSource) {
     // important: this must only be called AFTER common constructor
     try {
@@ -234,14 +261,24 @@ public class XPathParser {
       factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
       factory.setValidating(validation);
 
+      //自动注入命名空间
       factory.setNamespaceAware(false);
+      //忽略注解
       factory.setIgnoringComments(true);
+
+      //是否忽略元素内容的空格，这里需要注意的是设置false,因为Mapper的文件中的Sql是存在多个空格或者回车的，所以这里不应该设置忽略空白字符。
       factory.setIgnoringElementContentWhitespace(false);
+      //
       factory.setCoalescing(false);
+      //获取额外实体引用
       factory.setExpandEntityReferences(true);
 
       DocumentBuilder builder = factory.newDocumentBuilder();
+
+      //设置实体解析器
       builder.setEntityResolver(entityResolver);
+
+      //设置异常处理器，这里是默认的，直接抛出异常
       builder.setErrorHandler(new ErrorHandler() {
         @Override
         public void error(SAXParseException exception) throws SAXException {
@@ -258,12 +295,19 @@ public class XPathParser {
           // NOP
         }
       });
+      //构建Document对象
       return builder.parse(inputSource);
     } catch (Exception e) {
       throw new BuilderException("Error creating document instance.  Cause: " + e, e);
     }
   }
 
+  /**
+   * 初始化主要的变量
+   * @param validation 是否要认证
+   * @param variables 自定义比那里
+   * @param entityResolver 实体解析器
+   */
   private void commonConstructor(boolean validation, Properties variables, EntityResolver entityResolver) {
     this.validation = validation;
     this.entityResolver = entityResolver;

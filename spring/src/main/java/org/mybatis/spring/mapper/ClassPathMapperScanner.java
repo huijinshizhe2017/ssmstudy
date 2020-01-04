@@ -43,6 +43,11 @@ import java.util.Set;
  * This functionality was previously a private class of {@link MapperScannerConfigurer}, but was broken out in version
  * 1.2.0.
  *
+ * {@link ClassPathBeanDefinitionScanner}通过{@code basePackage}，
+ * {@ code注记类}或{@code markerInterface}注册映射器。如果指定了{@code注记类}和/或{@code markerInterface}，
+ * 则仅搜索指定的类型（将禁用搜索所有接口）。此功能以前是{@link MapperScannerConfigurer}的私有类，
+ * 但是在1.2.0版中出现。
+ *
  * @author Hunter Presnall
  * @author Eduardo Macarron
  * 
@@ -139,6 +144,7 @@ public class ClassPathMapperScanner extends ClassPathBeanDefinitionScanner {
   /**
    * Configures parent scanner to search for the right interfaces. It can search for all interfaces or just for those
    * that extends a markerInterface or/and those annotated with the annotationClass
+   * 配置父扫描程序以搜索正确的界面。它可以搜索所有接口，也可以仅搜索扩展markerInterface的接口或/和带有注解类注释的接口。
    */
   public void registerFilters() {
     boolean acceptAllInterfaces = true;
@@ -175,6 +181,7 @@ public class ClassPathMapperScanner extends ClassPathBeanDefinitionScanner {
   /**
    * Calls the parent search that will search and register all the candidates. Then the registered objects are post
    * processed to set them as MapperFactoryBeans
+   * 调用父级搜索，该搜索将搜索并注册所有候选者。然后注册的对象被过帐处理以将其设置为MapperFactoryBeans
    */
   @Override
   public Set<BeanDefinitionHolder> doScan(String... basePackages) {
@@ -184,12 +191,19 @@ public class ClassPathMapperScanner extends ClassPathBeanDefinitionScanner {
       LOGGER.warn(() -> "No MyBatis mapper was found in '" + Arrays.toString(basePackages)
           + "' package. Please check your configuration.");
     } else {
+      //后置处理Bean定义
       processBeanDefinitions(beanDefinitions);
     }
 
     return beanDefinitions;
   }
 
+  /**
+   * 后置处理
+   * 在这个类中，主要对于beanDefinitions增加了几个属性:
+   *    addToConfig|sqlSessionFactory|sqlSessionTemplate
+   * @param beanDefinitions
+   */
   private void processBeanDefinitions(Set<BeanDefinitionHolder> beanDefinitions) {
     GenericBeanDefinition definition;
     for (BeanDefinitionHolder holder : beanDefinitions) {
@@ -200,11 +214,15 @@ public class ClassPathMapperScanner extends ClassPathBeanDefinitionScanner {
 
       // the mapper interface is the original class of the bean
       // but, the actual class of the bean is MapperFactoryBean
-      definition.getConstructorArgumentValues().addGenericArgumentValue(beanClassName); // issue #59
+      //映射器接口是Bean的原始类，
+      //但是，bean的实际类是MapperFactoryBean
+      // issue #59
+      definition.getConstructorArgumentValues().addGenericArgumentValue(beanClassName);
       definition.setBeanClass(this.mapperFactoryBeanClass);
 
       definition.getPropertyValues().add("addToConfig", this.addToConfig);
 
+      //增加SqlSessionFactory属性
       boolean explicitFactoryUsed = false;
       if (StringUtils.hasText(this.sqlSessionFactoryBeanName)) {
         definition.getPropertyValues().add("sqlSessionFactory",
@@ -215,6 +233,8 @@ public class ClassPathMapperScanner extends ClassPathBeanDefinitionScanner {
         explicitFactoryUsed = true;
       }
 
+
+      //增加sqlSessionTemplate属性
       if (StringUtils.hasText(this.sqlSessionTemplateBeanName)) {
         if (explicitFactoryUsed) {
           LOGGER.warn(
@@ -236,12 +256,14 @@ public class ClassPathMapperScanner extends ClassPathBeanDefinitionScanner {
         LOGGER.debug(() -> "Enabling autowire by type for MapperFactoryBean with name '" + holder.getBeanName() + "'.");
         definition.setAutowireMode(AbstractBeanDefinition.AUTOWIRE_BY_TYPE);
       }
+      //设置懒加载
       definition.setLazyInit(lazyInitialization);
     }
   }
 
   /**
    * {@inheritDoc}
+   * 是否有候选组件
    */
   @Override
   protected boolean isCandidateComponent(AnnotatedBeanDefinition beanDefinition) {
@@ -250,6 +272,7 @@ public class ClassPathMapperScanner extends ClassPathBeanDefinitionScanner {
 
   /**
    * {@inheritDoc}
+   * 检查候选
    */
   @Override
   protected boolean checkCandidate(String beanName, BeanDefinition beanDefinition) {

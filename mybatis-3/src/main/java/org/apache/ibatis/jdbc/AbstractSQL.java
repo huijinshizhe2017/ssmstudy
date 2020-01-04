@@ -26,6 +26,7 @@ import java.util.List;
  * @author Jeff Butler
  * @author Adam Gent
  * @author Kazuki Shimizu
+ * Sql构造器
  */
 public abstract class AbstractSQL<T> {
 

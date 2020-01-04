@@ -49,6 +49,12 @@ public class MapperMethod {
   private final SqlCommand command;
   private final MethodSignature method;
 
+  /**
+   * 生成SqlCommand和MethodSignature
+   * @param mapperInterface
+   * @param method
+   * @param config
+   */
   public MapperMethod(Class<?> mapperInterface, Method method, Configuration config) {
     this.command = new SqlCommand(config, mapperInterface, method);
     this.method = new MethodSignature(config, mapperInterface, method);
@@ -106,12 +112,16 @@ public class MapperMethod {
 
   private Object rowCountResult(int rowCount) {
     final Object result;
+    //如果方法没有返回值，则不需要计算影响数据行数
     if (method.returnsVoid()) {
       result = null;
+      //这里通过Integer和int类型判断返回类型 int
     } else if (Integer.class.equals(method.getReturnType()) || Integer.TYPE.equals(method.getReturnType())) {
       result = rowCount;
+      //long
     } else if (Long.class.equals(method.getReturnType()) || Long.TYPE.equals(method.getReturnType())) {
       result = (long)rowCount;
+      //boolean,这如果插入成功，则返回true，否则返回false
     } else if (Boolean.class.equals(method.getReturnType()) || Boolean.TYPE.equals(method.getReturnType())) {
       result = rowCount > 0;
     } else {
@@ -193,6 +203,7 @@ public class MapperMethod {
   private <K, V> Map<K, V> executeForMap(SqlSession sqlSession, Object[] args) {
     Map<K, V> result;
     Object param = method.convertArgsToSqlCommandParam(args);
+    //是否有边界
     if (method.hasRowBounds()) {
       RowBounds rowBounds = method.extractRowBounds(args);
       result = sqlSession.selectMap(command.getName(), param, method.getMapKey(), rowBounds);
@@ -274,17 +285,60 @@ public class MapperMethod {
 
   public static class MethodSignature {
 
+    /**
+     * 是否返回多个结果
+     */
     private final boolean returnsMany;
+    /**
+     * 是否返回Map
+     */
     private final boolean returnsMap;
+    /**
+     * 是否不返回
+     */
     private final boolean returnsVoid;
+
+    /**
+     * 是否返回指针
+     */
     private final boolean returnsCursor;
+
+    /**
+     * 是否包含返回的可选性
+     */
     private final boolean returnsOptional;
+
+    /**
+     * 返回类型
+     */
     private final Class<?> returnType;
+
+    /**
+     * 映射Key的字符串
+     */
     private final String mapKey;
+
+    /**
+     * 结果处理索引
+     */
     private final Integer resultHandlerIndex;
+
+    /**
+     * 行的边界索引
+     */
     private final Integer rowBoundsIndex;
+
+    /**
+     * 参数名称解析器
+     */
     private final ParamNameResolver paramNameResolver;
 
+    /**
+     * 这里面进行一系列的赋值
+     * @param configuration
+     * @param mapperInterface
+     * @param method
+     */
     public MethodSignature(Configuration configuration, Class<?> mapperInterface, Method method) {
       Type resolvedReturnType = TypeParameterResolver.resolveReturnType(method, mapperInterface);
       if (resolvedReturnType instanceof Class<?>) {
@@ -305,6 +359,11 @@ public class MapperMethod {
       this.paramNameResolver = new ParamNameResolver(configuration, method);
     }
 
+    /**
+     * 将参数转换为sql命令的参数的对象
+     * @param args
+     * @return
+     */
     public Object convertArgsToSqlCommandParam(Object[] args) {
       return paramNameResolver.getNamedParams(args);
     }

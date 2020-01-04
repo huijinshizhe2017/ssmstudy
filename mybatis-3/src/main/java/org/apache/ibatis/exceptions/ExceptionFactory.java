@@ -19,6 +19,7 @@ import org.apache.ibatis.executor.ErrorContext;
 
 /**
  * @author Clinton Begin
+ * 工厂的异常
  */
 public class ExceptionFactory {
 

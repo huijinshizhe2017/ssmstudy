@@ -24,11 +24,16 @@ import org.apache.ibatis.reflection.ArrayUtil;
 
 /**
  * @author Clinton Begin
+ * 缓存的key，必须实现序列化和可复制的接口
  */
 public class CacheKey implements Cloneable, Serializable {
 
   private static final long serialVersionUID = 1146682552656046210L;
 
+  /**
+   * 空的缓存的key
+   * 如果执行更新操作将会抛出异常
+   */
   public static final CacheKey NULL_CACHE_KEY = new CacheKey(){
     @Override
     public void update(Object object) {
@@ -40,6 +45,10 @@ public class CacheKey implements Cloneable, Serializable {
     }
   };
 
+  /**
+   * default_mulitiplier:默认的多提供者
+   * defualt_hashcode:默认的hashcode
+   */
   private static final int DEFAULT_MULTIPLIER = 37;
   private static final int DEFAULT_HASHCODE = 17;
 
@@ -47,7 +56,13 @@ public class CacheKey implements Cloneable, Serializable {
   private int hashcode;
   private long checksum;
   private int count;
-  // 8/21/2017 - Sonarlint flags this as needing to be marked transient.  While true if content is not serializable, this is not always true and thus should not be marked transient.
+
+  /**
+   * 8/21/2017 - Sonarlint
+   * flags this as needing to be marked transient.
+   * While true if content is not serializable,
+   * this is not always true and thus should not be marked transient.
+   */
   private List<Object> updateList;
 
   public CacheKey() {
@@ -59,6 +74,7 @@ public class CacheKey implements Cloneable, Serializable {
 
   public CacheKey(Object[] objects) {
     this();
+    //这里没有重写update，所以不会报错
     updateAll(objects);
   }
 
@@ -84,6 +100,11 @@ public class CacheKey implements Cloneable, Serializable {
     }
   }
 
+  /**
+   * 所有的一致了才算是相等:包括类型、hashcode\checksum\count\updateList
+   * @param object
+   * @return
+   */
   @Override
   public boolean equals(Object object) {
     if (this == object) {
@@ -129,6 +150,11 @@ public class CacheKey implements Cloneable, Serializable {
     return returnValue.toString();
   }
 
+  /**
+   * 深克隆
+   * @return
+   * @throws CloneNotSupportedException
+   */
   @Override
   public CacheKey clone() throws CloneNotSupportedException {
     CacheKey clonedCacheKey = (CacheKey) super.clone();

@@ -12,6 +12,9 @@ import org.junit.Test;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * mybastis
@@ -94,6 +97,21 @@ public class CacheTest {
         User user2 = userDao2.findById(41);
         System.out.println(user2);
         System.out.println(user1 == user2);
+    }
 
+    @Test
+    public void findUserByIdAndSexTest(){
+        IUserDao userDao = sqlSession.getMapper(IUserDao.class);
+        List<User> users = userDao.findUserByIdAndSex(41, "女");
+        users.forEach(System.out::println);
+    }
+
+    @Test
+    public void findUserByIdsAndSexTest(){
+        IUserDao userDao = sqlSession.getMapper(IUserDao.class);
+        List<Integer> ids = new ArrayList<>();
+        ids.addAll(Arrays.asList(41,43,45,46));
+        List<User> users = userDao.findUserByIdsAndSex(ids, "女");
+        users.forEach(System.out::println);
     }
 }

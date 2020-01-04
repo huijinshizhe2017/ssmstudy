@@ -45,17 +45,25 @@ import org.springframework.dao.support.PersistenceExceptionTranslator;
  * actual SqlSession used is the one associated with the current Spring transaction. In addition, it manages the session
  * life-cycle, including closing, committing or rolling back the session as necessary based on the Spring transaction
  * configuration.
+ * Spring托管的线程安全的{@code SqlSession}与Spring事务管理一起使用，
+ * 以确保使用的实际SqlSession是与当前Spring事务相关联的SqlSession。
+ * 另外，它管理会话生命周期，包括根据Spring事务配置根据需要关闭，提交或回滚Session。
  * <p>
  * The template needs a SqlSessionFactory to create SqlSessions, passed as a constructor argument. It also can be
  * constructed indicating the executor type to be used, if not, the default executor type, defined in the session
  * factory will be used.
+ * 该模板需要一个SqlSessionFactory来创建SqlSession，并将其作为构造函数参数传递。
+ * 也可以构造它来指示要使用的执行程序类型，否则，将使用会话工厂中定义的默认执行程序类型。
  * <p>
  * This template converts MyBatis PersistenceExceptions into unchecked DataAccessExceptions, using, by default, a
  * {@code MyBatisExceptionTranslator}.
+ *  默认情况下，此模板使用{@code MyBatisExceptionTranslator}将MyBatis PersistenceExceptions转换
+ *  为未经检查的DataAccessExceptions。
  * <p>
  * Because SqlSessionTemplate is thread safe, a single instance can be shared by all DAOs; there should also be a small
  * memory savings by doing this. This pattern can be used in Spring configuration files as follows:
- *
+ * 因为SqlSessionTemplate是线程安全的，所以所有DAO都可以共享一个实例。这样也可以节省少量内存。
+ * 可以在Spring配置文件中使用此模式，如下所示：
  * <pre class="code">
  * {@code
  * <bean id="sqlSessionTemplate" class="org.mybatis.spring.SqlSessionTemplate">
@@ -111,6 +119,10 @@ public class SqlSessionTemplate implements SqlSession, DisposableBean {
    * MyBatis can be custom translated to a {@code RuntimeException} The {@code SQLExceptionTranslator} can also be null
    * and thus no exception translation will be done and MyBatis exceptions will be thrown
    *
+   * 使用给定的{@code SqlSessionFactory}和{@code ExecutorType}构造一个Spring托管的{@code SqlSession}。
+   * 可以提供自定义的{@code SQLExceptionTranslator}作为参数，
+   * 因此MyBatis抛出的任何{@code PersistenceException}都可以自定义转换为{@code RuntimeException}
+   * {@code SQLExceptionTranslator}也可以为null，因此不会进行异常转换完成并抛出MyBatis异常
    * @param sqlSessionFactory
    *          a factory of SqlSession
    * @param executorType

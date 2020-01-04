@@ -26,6 +26,7 @@ import org.apache.ibatis.reflection.SystemMetaObject;
 
 /**
  * @author Clinton Begin
+ * 非池数据源工厂类
  */
 public class UnpooledDataSourceFactory implements DataSourceFactory {
 
@@ -38,6 +39,10 @@ public class UnpooledDataSourceFactory implements DataSourceFactory {
     this.dataSource = new UnpooledDataSource();
   }
 
+  /**
+   * 设置属性
+   * @param properties
+   */
   @Override
   public void setProperties(Properties properties) {
     Properties driverProperties = new Properties();

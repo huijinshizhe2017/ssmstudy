@@ -32,9 +32,12 @@ import org.springframework.transaction.support.TransactionSynchronizationManager
 /**
  * {@code SpringManagedTransaction} handles the lifecycle of a JDBC connection. It retrieves a connection from Spring's
  * transaction manager and returns it back to it when it is no longer needed.
+ * {@code SpringManagedTransaction}处理JDBC连接的生命周期。
+ * 它从Spring的事务管理器中检索连接，并在不再需要时将其返回给它。
  * <p>
  * If Spring's transaction handling is active it will no-op all commit/rollback/close calls assuming that the Spring
  * transaction manager will do the job.
+ * 如果Spring的事务处理处于活动状态，则假定Spring事务管理器将执行此操作，它将不操作所有提交/回滚/关闭调用。
  * <p>
  * If it is not it will behave like {@code JdbcTransaction}.
  *
@@ -72,9 +75,12 @@ public class SpringManagedTransaction implements Transaction {
   /**
    * Gets a connection from Spring transaction manager and discovers if this {@code Transaction} should manage
    * connection or let it to Spring.
+   * 从Spring事务管理器获取连接，并发现此{@code Transaction}是应该管理连接还是让其连接到Spring。
    * <p>
    * It also reads autocommit setting because when using Spring Transaction MyBatis thinks that autocommit is always
    * false and will always call commit/rollback so we need to no-op that calls.
+   * 它还会读取自动提交设置，因为在使用Spring Transaction时，MyBatis认为自动提交始终为false，
+   * 并且始终会调用提交/回滚，因此我们需要不进行操作。
    */
   private void openConnection() throws SQLException {
     this.connection = DataSourceUtils.getConnection(this.dataSource);

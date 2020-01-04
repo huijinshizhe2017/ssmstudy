@@ -32,8 +32,12 @@ import org.xml.sax.SAXException;
  */
 public class XMLMapperEntityResolver implements EntityResolver {
 
+  /**
+   * 不同版本的约束文件
+   */
   private static final String IBATIS_CONFIG_SYSTEM = "ibatis-3-config.dtd";
   private static final String IBATIS_MAPPER_SYSTEM = "ibatis-3-mapper.dtd";
+
   private static final String MYBATIS_CONFIG_SYSTEM = "mybatis-3-config.dtd";
   private static final String MYBATIS_MAPPER_SYSTEM = "mybatis-3-mapper.dtd";
 
@@ -42,6 +46,7 @@ public class XMLMapperEntityResolver implements EntityResolver {
 
   /**
    * Converts a public DTD into a local one.
+   * 将公共DTD转换为本地DTD。
    *
    * @param publicId The public id that is what comes after "PUBLIC"
    * @param systemId The system id that is what comes after the public id.
@@ -66,6 +71,13 @@ public class XMLMapperEntityResolver implements EntityResolver {
     }
   }
 
+  /**
+   * SaxReader 传入dtd进行验证
+   * @param path
+   * @param publicId
+   * @param systemId
+   * @return
+   */
   private InputSource getInputSource(String path, String publicId, String systemId) {
     InputSource source = null;
     if (path != null) {

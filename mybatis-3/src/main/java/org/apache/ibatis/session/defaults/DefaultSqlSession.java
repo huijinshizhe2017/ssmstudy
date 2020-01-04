@@ -288,6 +288,7 @@ public class DefaultSqlSession implements SqlSession {
 
   @Override
   public <T> T getMapper(Class<T> type) {
+    //通过配置文件获取
     return configuration.getMapper(type, this);
   }
 
@@ -316,6 +317,13 @@ public class DefaultSqlSession implements SqlSession {
     return (!autoCommit && dirty) || force;
   }
 
+  /**
+   * 对集合进行包装，如果是一般的集合，则map为collection;
+   * 如果是List集合，则为list
+   * 如果是数组，则为array
+   * @param object
+   * @return
+   */
   private Object wrapCollection(final Object object) {
     if (object instanceof Collection) {
       StrictMap<Object> map = new StrictMap<>();

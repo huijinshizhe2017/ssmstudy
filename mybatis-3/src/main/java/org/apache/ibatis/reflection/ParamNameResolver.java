@@ -30,6 +30,9 @@ import org.apache.ibatis.session.RowBounds;
 
 public class ParamNameResolver {
 
+  /**
+   * 普遍的参数前缀
+   */
   private static final String GENERIC_NAME_PREFIX = "param";
 
   /**
@@ -39,11 +42,19 @@ public class ParamNameResolver {
    * the parameter index is used. Note that this index could be different from the actual index
    * when the method has special parameters (i.e. {@link RowBounds} or {@link ResultHandler}).
    * </p>
+   * <p>
+   *  key是索引，值是参数的名称。如果指定了名称，则从{@link Param}获取。如果未指定{@link Param}，则使用参数index。
+   *  请注意，当方法具有特殊参数（即{@link RowBounds}或{@link ResultHandler}）时，此索引可能与实际索引不同
+   * </p>
    * <ul>
    * <li>aMethod(@Param("M") int a, @Param("N") int b) -&gt; {{0, "M"}, {1, "N"}}</li>
+   *
    * <li>aMethod(int a, int b) -&gt; {{0, "0"}, {1, "1"}}</li>
    * <li>aMethod(int a, RowBounds rb, int b) -&gt; {{0, "0"}, {2, "1"}}</li>
    * </ul>
+   * aMethod(@Param("M") int a, @Param("N") int b)->{{0, "M"}, {1, "N"}}
+   * aMethod(int a, int b) -> {{0, "0"}, {1, "1"}}
+   * aMethod(int a, RowBounds rb, int b) -> {{0, "0"}, {2, "1"}}
    */
   private final SortedMap<Integer, String> names;
 
@@ -56,6 +67,8 @@ public class ParamNameResolver {
     int paramCount = paramAnnotations.length;
     // get names from @Param annotations
     for (int paramIndex = 0; paramIndex < paramCount; paramIndex++) {
+      //指定参数类型则跳过
+      //主要针对类型处理器和RowBounds
       if (isSpecialParameter(paramTypes[paramIndex])) {
         // skip special parameters
         continue;
@@ -76,11 +89,13 @@ public class ParamNameResolver {
         if (name == null) {
           // use the parameter index as the name ("0", "1", ...)
           // gcode issue #71
+          //若果没有指定，则使用数字表示
           name = String.valueOf(map.size());
         }
       }
       map.put(paramIndex, name);
     }
+    //不可修改排序的map集合
     names = Collections.unmodifiableSortedMap(map);
   }
 
@@ -105,12 +120,16 @@ public class ParamNameResolver {
    * Multiple parameters are named using the naming rule.
    * In addition to the default names, this method also adds the generic names (param1, param2,
    * ...).
+   * 返回一个没有名称的非特殊参数。使用命名规则命名多个参数。
+   * 除了默认名称外，此方法还添加了通用名称（param1，param2，...)
    * </p>
    */
   public Object getNamedParams(Object[] args) {
     final int paramCount = names.size();
+    //没有参数情况
     if (args == null || paramCount == 0) {
       return null;
+      //没有param注解并且参数个数为1个
     } else if (!hasParamAnnotation && paramCount == 1) {
       return args[names.firstKey()];
     } else {
@@ -121,6 +140,7 @@ public class ParamNameResolver {
         // add generic param names (param1, param2, ...)
         final String genericParamName = GENERIC_NAME_PREFIX + String.valueOf(i + 1);
         // ensure not to overwrite parameter named with @Param
+        //确保不覆盖以@Param命名的参数
         if (!names.containsValue(genericParamName)) {
           param.put(genericParamName, args[entry.getKey()]);
         }

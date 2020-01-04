@@ -31,6 +31,7 @@ public class testMybatisTest {
     public void init() throws IOException {
         in= Resources.getResourceAsStream("SqlMapConfig.xml");
         SqlSessionFactory factory = new SqlSessionFactoryBuilder().build(in);
+        //这里DefaultSqlSessionFactory默认的提交方式是false
         sqlSession = factory.openSession();
     }
 

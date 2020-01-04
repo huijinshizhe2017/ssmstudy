@@ -149,7 +149,8 @@ public class Configuration {
   protected boolean useColumnLabel = true;
 
   /**
-   * 是有启动缓冲
+   * 是有启动缓冲(二级缓存)
+   * 除此之外还需要在mapper文件设置
    */
   protected boolean cacheEnabled = true;
 
@@ -184,9 +185,14 @@ public class Configuration {
   protected Class<? extends VFS> vfsImpl;
 
   /**
-   * 本地加载范围
+   * 本地缓冲类型(一级缓存)
+   * 默认是开启的
    */
   protected LocalCacheScope localCacheScope = LocalCacheScope.SESSION;
+
+  /**
+   * 空的jdbc类型
+   */
   protected JdbcType jdbcTypeForNull = JdbcType.OTHER;
 
   /**
@@ -333,11 +339,13 @@ public class Configuration {
     typeAliasRegistry.registerAlias("POOLED", PooledDataSourceFactory.class);
     typeAliasRegistry.registerAlias("UNPOOLED", UnpooledDataSourceFactory.class);
 
-    //缓冲相关的别名配置
+    //----------------------------------------缓存开始------------------------------------------------------
+    //缓存相关的别名配置
     //不支持多线程，因为没能实现接口的锁功能，而且内部的map不是并发的map
     //缓存的功能是由内部的map结构来实现的．
     typeAliasRegistry.registerAlias("PERPETUAL", PerpetualCache.class);
 
+    //缓存回收策略:FIFO|LRU(默认)|SOFT|WEAK
     //列队形式缓冲
     //使用委派的设计模式，本省不保存缓冲数据，只保存缓冲的key，正常保存的缓冲数据在委派的Cache实现中，
     //这里主要通过列队的形式保证缓冲的个数恒定，默认为1024个。
@@ -362,6 +370,8 @@ public class Configuration {
     //这里的SOFT为软引用，WEAK为弱引用
     typeAliasRegistry.registerAlias("SOFT", SoftCache.class);
     typeAliasRegistry.registerAlias("WEAK", WeakCache.class);
+
+    //---------------------------------------------缓存结束---------------------------------------------------
 
     //供应商数据库ID提供程序
     typeAliasRegistry.registerAlias("DB_VENDOR", VendorDatabaseIdProvider.class);
@@ -809,6 +819,7 @@ public class Configuration {
     } else {
       executor = new SimpleExecutor(this, transaction);
     }
+    //如果为true,则启动CacheExecutor二级缓存
     if (cacheEnabled) {
       executor = new CachingExecutor(executor);
     }
@@ -976,6 +987,7 @@ public class Configuration {
   }
 
   public <T> T getMapper(Class<T> type, SqlSession sqlSession) {
+    //通过mapper注册集合中获取
     return mapperRegistry.getMapper(type, sqlSession);
   }
 
@@ -998,10 +1010,11 @@ public class Configuration {
     cacheRefMap.put(namespace, referencedNamespace);
   }
 
-  /*
+  /**
    * Parses all the unprocessed statement nodes in the cache. It is recommended
    * to call this method once all the mappers are added as it provides fail-fast
    * statement validation.
+   * 解析缓存中所有未处理的语句节点。建议在添加所有映射器后调用此方法，因为它提供了快速失败的语句验证。
    */
   protected void buildAllStatements() {
     parsePendingResultMaps();
@@ -1066,7 +1079,10 @@ public class Configuration {
     return lastPeriod > 0 ? statementId.substring(0, lastPeriod) : null;
   }
 
-  // Slow but a one time cost. A better solution is welcome.
+  /**
+   * Slow but a one time cost. A better solution is welcome.
+   * @param rm
+   */
   protected void checkGloballyForDiscriminatedNestedResultMaps(ResultMap rm) {
     if (rm.hasNestedResultMaps()) {
       for (Map.Entry<String, ResultMap> entry : resultMaps.entrySet()) {
@@ -1084,7 +1100,10 @@ public class Configuration {
     }
   }
 
-  // Slow but a one time cost. A better solution is welcome.
+  /**
+   * Slow but a one time cost. A better solution is welcome.
+   * @param rm
+   */
   protected void checkLocallyForDiscriminatedNestedResultMaps(ResultMap rm) {
     if (!rm.hasNestedResultMaps() && rm.getDiscriminator() != null) {
       for (Map.Entry<String, String> entry : rm.getDiscriminator().getDiscriminatorMap().entrySet()) {

@@ -44,6 +44,13 @@ public class XMLLanguageDriver implements LanguageDriver {
     return builder.parseScriptNode();
   }
 
+  /**
+   * 这里使用Script脚本创建动态的Sql
+   * @param configuration The MyBatis configuration
+   * @param script The content of the annotation
+   * @param parameterType input parameter type got from a mapper method or specified in the parameterType xml attribute. Can be null.
+   * @return
+   */
   @Override
   public SqlSource createSqlSource(Configuration configuration, String script, Class<?> parameterType) {
     // issue #3

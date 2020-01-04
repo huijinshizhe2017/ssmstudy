@@ -31,19 +31,54 @@ class PooledConnection implements InvocationHandler {
   private static final String CLOSE = "close";
   private static final Class<?>[] IFACES = new Class<?>[] { Connection.class };
 
+  /**
+   *
+   */
   private final int hashCode;
+
+  /**
+   * 连接时数据源
+   */
   private final PooledDataSource dataSource;
+
+  /**
+   * 真正的数据库连接
+   */
   private final Connection realConnection;
+
+  /**
+   *  数据库连接的代理对象
+   */
   private final Connection proxyConnection;
+
+  /**
+   * 从连接池中取出该连接的时间戳
+   */
   private long checkoutTimestamp;
+
+  /**
+   * 创建该连接的时间戳
+   */
   private long createdTimestamp;
+
+  /**
+   * 最后一次被使用的时间戳
+   */
   private long lastUsedTimestamp;
+
+  /**
+   * 根据数据库连接的URL，用户名和密码生成的hash值，用于标识该连接所在的连接池
+   */
   private int connectionTypeCode;
+
+  /**
+   * 检测当前连接是否有效
+   */
   private boolean valid;
 
   /**
    * Constructor for SimplePooledConnection that uses the Connection and PooledDataSource passed in.
-   *
+   * 使用传入的Connection和PooledDataSource的SimplePooledConnection的构造方法。
    * @param connection - the connection that is to be presented as a pooled connection
    * @param dataSource - the dataSource that the connection is from
    */
@@ -59,6 +94,7 @@ class PooledConnection implements InvocationHandler {
 
   /**
    * Invalidates the connection.
+   * 连接无效。
    */
   public void invalidate() {
     valid = false;
@@ -66,6 +102,7 @@ class PooledConnection implements InvocationHandler {
 
   /**
    * Method to see if the connection is usable.
+   * 查看连接是否可用的方法。
    *
    * @return True if the connection is usable
    */
@@ -75,7 +112,7 @@ class PooledConnection implements InvocationHandler {
 
   /**
    * Getter for the *real* connection that this wraps.
-   *
+   * 此包装的* real *连接的Getter。
    * @return The connection
    */
   public Connection getRealConnection() {

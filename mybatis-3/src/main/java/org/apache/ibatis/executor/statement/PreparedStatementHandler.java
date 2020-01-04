@@ -34,6 +34,8 @@ import org.apache.ibatis.session.RowBounds;
 
 /**
  * @author Clinton Begin
+ * 使用PrepareStatement执行，虽然初次创建PrepareStatement时开销比较大，
+ * 但在多次处理SQL时只需要初始化一次，可以有效提高性能
  */
 public class PreparedStatementHandler extends BaseStatementHandler {
 

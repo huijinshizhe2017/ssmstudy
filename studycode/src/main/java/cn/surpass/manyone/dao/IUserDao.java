@@ -6,7 +6,7 @@ import java.util.List;
 
 /**
  * mybastis
- * cn.surpass.manyone.dao
+ * cn.surpass.manyone.paras
  *
  * @author surpass
  * @date 2019/8/14

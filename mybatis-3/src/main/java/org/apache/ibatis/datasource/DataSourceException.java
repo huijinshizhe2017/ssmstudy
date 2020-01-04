@@ -19,6 +19,7 @@ import org.apache.ibatis.exceptions.PersistenceException;
 
 /**
  * @author Clinton Begin
+ * 数据源异常
  */
 public class DataSourceException extends PersistenceException {
 

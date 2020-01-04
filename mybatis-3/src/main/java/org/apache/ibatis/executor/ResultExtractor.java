@@ -24,6 +24,7 @@ import org.apache.ibatis.session.Configuration;
 
 /**
  * @author Andrew Gustafson
+ * 结果执行器
  */
 public class ResultExtractor {
   private final Configuration configuration;

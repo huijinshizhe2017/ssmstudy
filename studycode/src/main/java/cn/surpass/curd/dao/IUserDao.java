@@ -7,7 +7,7 @@ import java.util.List;
 
 /**
  * mybastis
- * cn.surpass.curd.dao
+ * cn.surpass.curd.paras
  *
  * @author surpass
  * @date 2019/8/13

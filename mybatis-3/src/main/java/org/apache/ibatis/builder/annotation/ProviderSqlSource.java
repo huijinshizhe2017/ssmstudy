@@ -68,7 +68,9 @@ public class ProviderSqlSource implements SqlSource {
    * @since 3.5.3
    */
   public ProviderSqlSource(Configuration configuration, Annotation provider, Class<?> mapperType, Method mapperMethod) {
+    //候选的被提供的方法名
     String candidateProviderMethodName;
+    //候选的被提供的方法对象
     Method candidateProviderMethod = null;
     try {
       this.configuration = configuration;
@@ -76,8 +78,11 @@ public class ProviderSqlSource implements SqlSource {
       Lang lang = mapperMethod == null ? null : mapperMethod.getAnnotation(Lang.class);
       this.languageDriver = configuration.getLanguageDriver(lang == null ? null : lang.value());
       this.providerType = getProviderType(provider, mapperMethod);
+
+      //通过注解的method方法获取方面名
       candidateProviderMethodName = (String) provider.annotationType().getMethod("method").invoke(provider);
 
+      //
       if (candidateProviderMethodName.length() == 0 && ProviderMethodResolver.class.isAssignableFrom(this.providerType)) {
         candidateProviderMethod = ((ProviderMethodResolver) this.providerType.getDeclaredConstructor().newInstance())
             .resolveMethod(new ProviderContext(mapperType, mapperMethod, configuration.getDatabaseId()));

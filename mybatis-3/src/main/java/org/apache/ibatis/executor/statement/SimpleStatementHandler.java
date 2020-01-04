@@ -34,6 +34,7 @@ import org.apache.ibatis.session.RowBounds;
 
 /**
  * @author Clinton Begin
+ * 就是直接使用普通的Statement对象，这样每次执行SQL语句都需要数据库对SQL进行预编译
  */
 public class SimpleStatementHandler extends BaseStatementHandler {
 

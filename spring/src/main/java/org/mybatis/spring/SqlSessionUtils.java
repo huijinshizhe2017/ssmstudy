@@ -35,7 +35,8 @@ import org.springframework.transaction.support.TransactionSynchronizationManager
 /**
  * Handles MyBatis SqlSession life cycle. It can register and get SqlSessions from Spring
  * {@code TransactionSynchronizationManager}. Also works if no transaction is active.
- *
+ * 处理MyBatis SqlSession生命周期。它可以注册并从Spring获取SqlSessions
+ * {@code TransactionSynchronizationManager}。如果没有事务处于活动状态，则也适用。
  * @author Hunter Presnall
  * @author Eduardo Macarron
  */
@@ -49,6 +50,7 @@ public final class SqlSessionUtils {
 
   /**
    * This class can't be instantiated, exposes static utility methods only.
+   * 工具类不能被实例化
    */
   private SqlSessionUtils() {
     // do nothing
@@ -57,7 +59,8 @@ public final class SqlSessionUtils {
   /**
    * Creates a new MyBatis {@code SqlSession} from the {@code SqlSessionFactory} provided as a parameter and using its
    * {@code DataSource} and {@code ExecutorType}
-   *
+   * 从作为参数提供的{@code SqlSessionFactory}并使用其{@code DataSource}和{@code ExecutorType}
+   * 创建一个新的MyBatis {@code SqlSession}
    * @param sessionFactory
    *          a MyBatis {@code SqlSessionFactory} to create new sessions
    * @return a MyBatis {@code SqlSession}
@@ -75,7 +78,9 @@ public final class SqlSessionUtils {
    * current transaction. If there is not any, it creates a new one. Then, it synchronizes the SqlSession with the
    * transaction if Spring TX is active and <code>SpringManagedTransactionFactory</code> is configured as a transaction
    * manager.
-   *
+   * 从Spring事务管理器获取SqlSession或根据需要创建一个新的SqlSession。尝试从当前事务中获取SqlSession。
+   * 如果没有，它将创建一个新的。然后，如果Spring TX处于活动状态并且<code>SpringManagedTransactionFactory
+   * </code>被配置为事务管理器，则它将SqlSession与事务同步。
    * @param sessionFactory
    *          a MyBatis {@code SqlSessionFactory} to create new sessions
    * @param executorType
@@ -111,11 +116,13 @@ public final class SqlSessionUtils {
 
   /**
    * Register session holder if synchronization is active (i.e. a Spring TX is active).
-   *
+   * 如果同步处于活动状态（即Spring TX处于活动状态），则注册会话持有者。
    * Note: The DataSource used by the Environment should be synchronized with the transaction either through
    * DataSourceTxMgr or another tx synchronization. Further assume that if an exception is thrown, whatever started the
    * transaction will handle closing / rolling back the Connection associated with the SqlSession.
-   * 
+   *  注意：环境使用的数据源应通过以下方式与事务同步：
+   *  DataSourceTxMgr或另一个TX同步。进一步假设，如果引发异常，则无论启动了什么
+   *  事务将处理关闭/回滚与SqlSession关联的Connection。
    * @param sessionFactory
    *          sqlSessionFactory used for registration.
    * @param executorType
@@ -218,6 +225,8 @@ public final class SqlSessionUtils {
    * Callback for cleaning up resources. It cleans TransactionSynchronizationManager and also commits and closes the
    * {@code SqlSession}. It assumes that {@code Connection} life cycle will be managed by
    * {@code DataSourceTransactionManager} or {@code JtaTransactionManager}
+   * 回调以清理资源。它清除TransactionSynchronizationManager，还提交并关闭{@code SqlSession}。
+   * 假设{@code Connection}生命周期将由{@code DataSourceTransactionManager}或{@code JtaTransactionManager}管理
    */
   private static final class SqlSessionSynchronization extends TransactionSynchronizationAdapter {
 

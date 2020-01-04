@@ -17,6 +17,7 @@ package org.apache.ibatis.parsing;
 
 /**
  * @author Clinton Begin
+ * 这里根据不同的TokenHandler处理了${}和#{}两种形式的语句.
  */
 public class GenericTokenParser {
 

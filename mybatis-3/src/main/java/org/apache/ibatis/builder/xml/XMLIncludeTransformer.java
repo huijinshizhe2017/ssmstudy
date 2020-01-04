@@ -32,6 +32,7 @@ import org.w3c.dom.NodeList;
 
 /**
  * @author Frank D. Martinez [mnesarco]
+ * 配置文件include标签处理
  */
 public class XMLIncludeTransformer {
 
@@ -46,6 +47,7 @@ public class XMLIncludeTransformer {
   public void applyIncludes(Node source) {
     Properties variablesContext = new Properties();
     Properties configurationVariables = configuration.getVariables();
+    //如果configurationVariables不为空，则赋值给variablesContext
     Optional.ofNullable(configurationVariables).ifPresent(variablesContext::putAll);
     applyIncludes(source, variablesContext, false);
   }
@@ -56,7 +58,9 @@ public class XMLIncludeTransformer {
    * @param variablesContext Current context for static variables with values
    */
   private void applyIncludes(Node source, final Properties variablesContext, boolean included) {
+    //如果包含include节点
     if (source.getNodeName().equals("include")) {
+      //寻找Sql骨架
       Node toInclude = findSqlFragment(getStringAttribute(source, "refid"), variablesContext);
       Properties toIncludeContext = getVariablesContext(source, variablesContext);
       applyIncludes(toInclude, toIncludeContext, true);
@@ -68,6 +72,8 @@ public class XMLIncludeTransformer {
         toInclude.getParentNode().insertBefore(toInclude.getFirstChild(), toInclude);
       }
       toInclude.getParentNode().removeChild(toInclude);
+      //Element元素
+
     } else if (source.getNodeType() == Node.ELEMENT_NODE) {
       if (included && !variablesContext.isEmpty()) {
         // replace variables in attribute values

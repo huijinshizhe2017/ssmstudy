@@ -153,7 +153,8 @@ public class BatchExecutor extends BaseExecutor {
           if (Jdbc3KeyGenerator.class.equals(keyGenerator.getClass())) {
             Jdbc3KeyGenerator jdbc3KeyGenerator = (Jdbc3KeyGenerator) keyGenerator;
             jdbc3KeyGenerator.processBatch(ms, stmt, parameterObjects);
-          } else if (!NoKeyGenerator.class.equals(keyGenerator.getClass())) { //issue #141
+            //issue #141
+          } else if (!NoKeyGenerator.class.equals(keyGenerator.getClass())) {
             for (Object parameter : parameterObjects) {
               keyGenerator.processAfter(this, ms, stmt, parameter);
             }

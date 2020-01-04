@@ -20,6 +20,7 @@ import javax.sql.DataSource;
 
 /**
  * @author Clinton Begin
+ * 数据源的工厂
  */
 public interface DataSourceFactory {
 

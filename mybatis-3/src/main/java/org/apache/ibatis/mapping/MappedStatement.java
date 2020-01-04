@@ -134,8 +134,11 @@ public final class MappedStatement {
       mappedStatement.configuration = configuration;
       mappedStatement.id = id;
       mappedStatement.sqlSource = sqlSource;
+      //默认的执行器类型
       mappedStatement.statementType = StatementType.PREPARED;
+      //默认的结果类型
       mappedStatement.resultSetType = ResultSetType.DEFAULT;
+      //默认的参数集合
       mappedStatement.parameterMap = new ParameterMap.Builder(configuration, "defaultParameterMap", null, new ArrayList<>()).build();
       mappedStatement.resultMaps = new ArrayList<>();
       mappedStatement.sqlCommandType = sqlCommandType;
@@ -359,6 +362,11 @@ public final class MappedStatement {
     return resultSets;
   }
 
+  /**
+   *
+   * @param parameterObject
+   * @return
+   */
   public BoundSql getBoundSql(Object parameterObject) {
     BoundSql boundSql = sqlSource.getBoundSql(parameterObject);
     List<ParameterMapping> parameterMappings = boundSql.getParameterMappings();
@@ -367,6 +375,7 @@ public final class MappedStatement {
     }
 
     // check for nested result maps in parameter mappings (issue #30)
+    //检查参数映射中的嵌套结果映射（issue＃30）
     for (ParameterMapping pm : boundSql.getParameterMappings()) {
       String rmId = pm.getResultMapId();
       if (rmId != null) {
@@ -380,6 +389,11 @@ public final class MappedStatement {
     return boundSql;
   }
 
+  /**
+   * 通过","分割字符串
+   * @param in
+   * @return
+   */
   private static String[] delimitedStringToArray(String in) {
     if (in == null || in.trim().length() == 0) {
       return null;

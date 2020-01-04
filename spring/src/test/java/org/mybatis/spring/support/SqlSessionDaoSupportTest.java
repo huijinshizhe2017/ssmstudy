@@ -100,7 +100,7 @@ class SqlSessionDaoSupportTest extends AbstractMyBatisSpringTest {
 
     GenericBeanDefinition definition = new GenericBeanDefinition();
     definition.setBeanClass(MockSqlSessionDao.class);
-    applicationContext.registerBeanDefinition("dao", definition);
+    applicationContext.registerBeanDefinition("paras", definition);
 
     // add support for autowiring fields
     AnnotationConfigUtils.registerAnnotationConfigProcessors(applicationContext);

@@ -22,6 +22,8 @@ import java.io.Closeable;
  * Cursors are a perfect fit to handle millions of items queries that would not normally fits in memory.
  * If you use collections in resultMaps then cursor SQL queries must be ordered (resultOrdered="true")
  * using the id columns of the resultMap.
+ * 游标协定以使用Iterator延迟处理获取项目。游标非常适合处理通常不适合内存的数百万个项目查询。
+ * 如果在resultMaps中使用集合，则必须使用resultMap的id列对游标SQL查询进行排序（resultOrdered =“ true”）。
  *
  * @author Guillaume Darmont / guillaume@dropinocean.com
  */
@@ -29,18 +31,23 @@ public interface Cursor<T> extends Closeable, Iterable<T> {
 
   /**
    * @return true if the cursor has started to fetch items from database.
+   * 如果游标已开始从数据库中获取项目。
    */
   boolean isOpen();
 
   /**
    *
    * @return true if the cursor is fully consumed and has returned all elements matching the query.
+   * 如果游标已被完全消耗，并且返回了所有与查询匹配的元素。
    */
   boolean isConsumed();
 
+
   /**
    * Get the current item index. The first item has the index 0.
+   * 获取当前项目索引。第一项的索引为0。
    * @return -1 if the first cursor item has not been retrieved. The index of the current item retrieved.
+   * 如果尚未检索到第一个光标项目。检索到的当前项目的索引。
    */
   int getCurrentIndex();
 }

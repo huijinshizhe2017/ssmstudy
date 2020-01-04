@@ -20,22 +20,31 @@ import java.util.Properties;
 /**
  * @author Clinton Begin
  * @author Kazuki Shimizu
+ * 属性解析器,此类主要针对${}属性的处理
  */
 public class PropertyParser {
 
+  /**
+   * 前缀
+   */
   private static final String KEY_PREFIX = "org.apache.ibatis.parsing.PropertyParser.";
   /**
    * The special property key that indicate whether enable a default value on placeholder.
+   * 特殊属性键，指示是否在占位符上启用默认值。
    * <p>
    *   The default value is {@code false} (indicate disable a default value on placeholder)
    *   If you specify the {@code true}, you can specify key and default value on placeholder (e.g. {@code ${db.username:postgres}}).
    * </p>
+   * 默认值为{@code false}（表示在占位符上禁用默认值）如果指定{@code true}，
+   * 则可以在占位符上指定键和默认值（例如{@code $ {db.username：postgres} }。
    * @since 3.4.2
    */
   public static final String KEY_ENABLE_DEFAULT_VALUE = KEY_PREFIX + "enable-default-value";
 
   /**
    * The special property key that specify a separator for key and default value on placeholder.
+   * 特殊属性键，用于指定键的分隔符和占位符的默认值。
+   * 默认的分隔符:
    * <p>
    *   The default separator is {@code ":"}.
    * </p>
@@ -43,6 +52,9 @@ public class PropertyParser {
    */
   public static final String KEY_DEFAULT_VALUE_SEPARATOR = KEY_PREFIX + "default-value-separator";
 
+  /**
+   * 默认的值false
+   */
   private static final String ENABLE_DEFAULT_VALUE = "false";
   private static final String DEFAULT_VALUE_SEPARATOR = ":";
 

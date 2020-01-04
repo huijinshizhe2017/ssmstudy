@@ -136,26 +136,45 @@ public abstract class BaseExecutor implements Executor {
     return query(ms, parameter, rowBounds, resultHandler, key, boundSql);
   }
 
+  /**
+   * 执行查询方法
+   * @param ms 执行器
+   * @param parameter 传入参数
+   * @param rowBounds 行的边界
+   * @param resultHandler 结果处理器
+   * @param key key
+   * @param boundSql 边界Sql
+   * @param <E> 返回对象或者其集合的泛型
+   * @return 返回结果
+   * @throws SQLException Sql执行异常
+   */
   @SuppressWarnings("unchecked")
   @Override
   public <E> List<E> query(MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler, CacheKey key, BoundSql boundSql) throws SQLException {
     ErrorContext.instance().resource(ms.getResource()).activity("executing a query").object(ms.getId());
+    //如果执行器关闭，则抛出异常
     if (closed) {
       throw new ExecutorException("Executor was closed.");
     }
+    //如果查询栈为0或者助执行器必须刷新缓存，需要清空本地缓存
     if (queryStack == 0 && ms.isFlushCacheRequired()) {
       clearLocalCache();
     }
     List<E> list;
     try {
+      //查询栈++
       queryStack++;
+      //从本地的localCache(一级缓存)获取数据
+      //结果处理器不为空则不走缓存
       list = resultHandler == null ? (List<E>) localCache.getObject(key) : null;
       if (list != null) {
         handleLocallyCachedOutputParameters(ms, key, parameter, boundSql);
       } else {
+        //执行数据库查询
         list = queryFromDatabase(ms, parameter, rowBounds, resultHandler, key, boundSql);
       }
     } finally {
+      //查询栈-1
       queryStack--;
     }
     if (queryStack == 0) {
@@ -164,6 +183,7 @@ public abstract class BaseExecutor implements Executor {
       }
       // issue #601
       deferredLoads.clear();
+      //如果本地缓存为LocalCacheScope.STATEMENT,则会清空缓存
       if (configuration.getLocalCacheScope() == LocalCacheScope.STATEMENT) {
         // issue #482
         clearLocalCache();
@@ -259,6 +279,9 @@ public abstract class BaseExecutor implements Executor {
     }
   }
 
+  /**
+   * 清空一级缓存
+   */
   @Override
   public void clearLocalCache() {
     if (!closed) {
@@ -279,6 +302,10 @@ public abstract class BaseExecutor implements Executor {
   protected abstract <E> Cursor<E> doQueryCursor(MappedStatement ms, Object parameter, RowBounds rowBounds, BoundSql boundSql)
       throws SQLException;
 
+  /**
+   * 关闭执行器
+   * @param statement 执行器
+   */
   protected void closeStatement(Statement statement) {
     if (statement != null) {
       try {

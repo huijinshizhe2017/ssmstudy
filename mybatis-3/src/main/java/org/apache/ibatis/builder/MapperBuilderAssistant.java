@@ -104,12 +104,15 @@ public class MapperBuilderAssistant extends BaseBuilder {
   }
 
   public Cache useCacheRef(String namespace) {
+    //配置的namespace不能为null
     if (namespace == null) {
       throw new BuilderException("cache-ref element requires a namespace attribute.");
     }
     try {
+      //处理多线程的影响
       unresolvedCacheRef = true;
       Cache cache = configuration.getCache(namespace);
+      //当前配置对象必须存在此命名空间
       if (cache == null) {
         throw new IncompleteElementException("No cache for namespace '" + namespace + "' could be found.");
       }
@@ -270,6 +273,7 @@ public class MapperBuilderAssistant extends BaseBuilder {
     id = applyCurrentNamespace(id, false);
     boolean isSelect = sqlCommandType == SqlCommandType.SELECT;
 
+    //典型的构建者设计模式，通过链式调用，最终build出一个映射执行器的对象
     MappedStatement.Builder statementBuilder = new MappedStatement.Builder(configuration, id, sqlSource, sqlCommandType)
         .resource(resource)
         .fetchSize(fetchSize)
@@ -288,11 +292,13 @@ public class MapperBuilderAssistant extends BaseBuilder {
         .useCache(valueOrDefault(useCache, isSelect))
         .cache(currentCache);
 
+    //参数映射
     ParameterMap statementParameterMap = getStatementParameterMap(parameterMap, parameterType, id);
     if (statementParameterMap != null) {
       statementBuilder.parameterMap(statementParameterMap);
     }
 
+    //加入到映射执行器的集合中
     MappedStatement statement = statementBuilder.build();
     configuration.addMappedStatement(statement);
     return statement;

@@ -20,20 +20,63 @@ import java.util.List;
 
 /**
  * @author Clinton Begin
+ * 连接池状态
  */
 public class PoolState {
 
+  /**
+   * 数据库连接池数据源
+   */
   protected PooledDataSource dataSource;
 
+  /**
+   * 空闲连接数
+   */
   protected final List<PooledConnection> idleConnections = new ArrayList<>();
+
+  /**
+   * 活动连接数
+   */
   protected final List<PooledConnection> activeConnections = new ArrayList<>();
+
+  /**
+   * 请求个数
+   */
   protected long requestCount = 0;
+
+  /**
+   * 计算请求时间
+   */
   protected long accumulatedRequestTime = 0;
+
+  /**
+   *  所有连接积累的checkoutTime时长 CheckoutTime 是指从连接池中取出连接到归还连接着段时长
+   */
   protected long accumulatedCheckoutTime = 0;
+
+  /**
+   * 当连接长时间未归还给连接池时，会被认为连接超时，这个字段就是表示连接超时的个数
+   */
   protected long claimedOverdueConnectionCount = 0;
+
+  /**
+   *累计超时时间
+   */
   protected long accumulatedCheckoutTimeOfOverdueConnections = 0;
+
+  /**
+   * 累计等待时间
+   */
   protected long accumulatedWaitTime = 0;
+
+  /**
+   * 累计等待次数
+   */
   protected long hadToWaitCount = 0;
+
+  /**
+   * 无效的连接数
+   */
   protected long badConnectionCount = 0;
 
   public PoolState(PooledDataSource dataSource) {

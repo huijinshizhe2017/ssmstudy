@@ -17,6 +17,7 @@ package org.apache.ibatis.builder;
 
 /**
  * @author Eduardo Macarron
+ * 未完成元素解析异常
  */
 public class IncompleteElementException extends BuilderException {
   private static final long serialVersionUID = -3697292286890900315L;

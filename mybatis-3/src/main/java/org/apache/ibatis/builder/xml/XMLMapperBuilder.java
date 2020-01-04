@@ -90,14 +90,22 @@ public class XMLMapperBuilder extends BaseBuilder {
   }
 
   public void parse() {
+    //判断是否已经加载本地文件，如果没有加载，则继续加载
     if (!configuration.isResourceLoaded(resource)) {
       configurationElement(parser.evalNode("/mapper"));
+      //配置文件增加本地的资源路径
       configuration.addLoadedResource(resource);
+      //绑定映射到命名空间
       bindMapperForNamespace();
     }
 
+
+    //想想这三部分是怎么产生的
+    //处理为涉及到的结果集
     parsePendingResultMaps();
+    //处理未完成的缓存引用
     parsePendingCacheRefs();
+    //处理未完成的执行器
     parsePendingStatements();
   }
 
@@ -105,18 +113,30 @@ public class XMLMapperBuilder extends BaseBuilder {
     return sqlFragments.get(refid);
   }
 
+  /**
+   * 解析Mapper文件中的内容
+   * @param context
+   */
   private void configurationElement(XNode context) {
     try {
+      //获取命名空间，这里要求命名空间不能为null
       String namespace = context.getStringAttribute("namespace");
       if (namespace == null || namespace.equals("")) {
         throw new BuilderException("Mapper's namespace cannot be empty");
       }
+      //设置当前的命名空间
       builderAssistant.setCurrentNamespace(namespace);
+      //解析是否有缓冲引用,也就是和被引用的命名空间共用一个cache对象
       cacheRefElement(context.evalNode("cache-ref"));
+      //处理cache引用
       cacheElement(context.evalNode("cache"));
+      //参数映射对象创建
       parameterMapElement(context.evalNodes("/mapper/parameterMap"));
+      //创建结果集映射，类似于参数映射，这里还需要处理复杂的一对多的关系
       resultMapElements(context.evalNodes("/mapper/resultMap"));
+      //Sql片段
       sqlElement(context.evalNodes("/mapper/sql"));
+      //通过内容构建Sql执行器(这里主要有"select|insert|update|delete"
       buildStatementFromContext(context.evalNodes("select|insert|update|delete"));
     } catch (Exception e) {
       throw new BuilderException("Error parsing Mapper XML. The XML location is '" + resource + "'. Cause: " + e, e);
@@ -125,28 +145,38 @@ public class XMLMapperBuilder extends BaseBuilder {
 
   private void buildStatementFromContext(List<XNode> list) {
     if (configuration.getDatabaseId() != null) {
+      //根据数据库ID创建
       buildStatementFromContext(list, configuration.getDatabaseId());
     }
+    //不指定数据库ID创建
     buildStatementFromContext(list, null);
   }
 
   private void buildStatementFromContext(List<XNode> list, String requiredDatabaseId) {
     for (XNode context : list) {
+      //没有做任何操作，只是属性赋值
       final XMLStatementBuilder statementParser = new XMLStatementBuilder(configuration, builderAssistant, context, requiredDatabaseId);
       try {
+        //执行器解析执行节点
         statementParser.parseStatementNode();
       } catch (IncompleteElementException e) {
+        //增加未完成的执行器解析器
         configuration.addIncompleteStatement(statementParser);
       }
     }
   }
 
+  /**
+   * 处理未完成的结果集
+   */
   private void parsePendingResultMaps() {
     Collection<ResultMapResolver> incompleteResultMaps = configuration.getIncompleteResultMaps();
+    //这里为什么要枷锁
     synchronized (incompleteResultMaps) {
       Iterator<ResultMapResolver> iter = incompleteResultMaps.iterator();
       while (iter.hasNext()) {
         try {
+          //
           iter.next().resolve();
           iter.remove();
         } catch (IncompleteElementException e) {
@@ -186,29 +216,59 @@ public class XMLMapperBuilder extends BaseBuilder {
     }
   }
 
+  /**
+   * 解析cacheRef，这里要求namespace必须有值，并且在之前的mapper必须被定义(这里不是绝对的，通过IncompleteCacheRef还得得到二次重生机会)，否则会抛出异常.
+   * 参见{@link MapperBuilderAssistant#useCacheRef(String)}
+   * @param context
+   */
   private void cacheRefElement(XNode context) {
     if (context != null) {
+      //配置文件增加当前命名空间和共用引用的命名空间
       configuration.addCacheRef(builderAssistant.getCurrentNamespace(), context.getStringAttribute("namespace"));
+      //创建缓存的解析器
+      //namesapce必须有值，否则会抛出异常
       CacheRefResolver cacheRefResolver = new CacheRefResolver(builderAssistant, context.getStringAttribute("namespace"));
       try {
+        //创建解析器的引用
         cacheRefResolver.resolveCacheRef();
       } catch (IncompleteElementException e) {
+        //这里处理了先于缓存引用的命名空间，
         configuration.addIncompleteCacheRef(cacheRefResolver);
       }
     }
   }
 
+  /**
+   * 这里的缓存参数。
+   * 其中缓存的类型默认为:PERPETUAL,详细解释参见:{@link Configuration#Configuration()}
+   * @param context
+   */
   private void cacheElement(XNode context) {
     if (context != null) {
       String type = context.getStringAttribute("type", "PERPETUAL");
+      //通过注册的假名获取，参见Configuration的构造方法
       Class<? extends Cache> typeClass = typeAliasRegistry.resolveAlias(type);
+      //缓存收回策略
+      //LRU –  最近最少使用的：移除最长时间不被使用的对象。(默认)
+      //FIFO –  先进先出：按对象进入缓存的顺序来移除它们。
+      //SOFT –  软引用：移除基于垃圾回收器状态和软引用规则的对象。
+      //WEAK –  弱引用：更积极地移除基于垃圾收集器状态和弱引用规则的对象。
       String eviction = context.getStringAttribute("eviction", "LRU");
+      //通过字符串解析获取缓存对象，有则取，没有则创建，否则抛异常
       Class<? extends Cache> evictionClass = typeAliasRegistry.resolveAlias(eviction);
+      //刷新间隔。可以被设置为任意的正整数，而且它们代表一个合理的毫秒形式的时间段。默认情况是不设置，也就是没有刷新间隔，缓存仅仅调用语句时刷新。
       Long flushInterval = context.getLongAttribute("flushInterval");
+
+      //可以被设置为任意正整数，要记住你缓存的对象数目和你运行环境的可用内存资源数目。默认值1024。
       Integer size = context.getIntAttribute("size");
+      //是否只读属性可以被设置为 true 或 false。只读的缓存会给所有调用者返回缓存对象的相同实例。因此这些对象不能被修改。
+      // 这提供了很重要的性能优势。可读写的缓存会返回缓存对象的拷贝（通过序列化）。这会慢一些，但是安全，因此默认是false。
       boolean readWrite = !context.getBooleanAttribute("readOnly", false);
+      //是否阻塞
       boolean blocking = context.getBooleanAttribute("blocking", false);
+      //获取到其他属性
       Properties props = context.getChildrenAsProperties();
+      //构建者助理
       builderAssistant.useNewCache(typeClass, evictionClass, flushInterval, size, readWrite, blocking, props);
     }
   }
@@ -217,24 +277,40 @@ public class XMLMapperBuilder extends BaseBuilder {
     for (XNode parameterMapNode : list) {
       String id = parameterMapNode.getStringAttribute("id");
       String type = parameterMapNode.getStringAttribute("type");
+      //类型要对应一个实体类
       Class<?> parameterClass = resolveClass(type);
+      //解析parameter接节点
       List<XNode> parameterNodes = parameterMapNode.evalNodes("parameter");
       List<ParameterMapping> parameterMappings = new ArrayList<>();
       for (XNode parameterNode : parameterNodes) {
+        //解析parameter的每个属性
+        //类对象属性
         String property = parameterNode.getStringAttribute("property");
+        //Java对应的类型
         String javaType = parameterNode.getStringAttribute("javaType");
+        //数据库对应的类型
         String jdbcType = parameterNode.getStringAttribute("jdbcType");
+        //结果集
         String resultMap = parameterNode.getStringAttribute("resultMap");
+        //模式
         String mode = parameterNode.getStringAttribute("mode");
+        //类型处理器
         String typeHandler = parameterNode.getStringAttribute("typeHandler");
+        //数字范围
         Integer numericScale = parameterNode.getIntAttribute("numericScale");
+        //这里需要解析参数模型，主要包括IN|OUT|INOUT
         ParameterMode modeEnum = resolveParameterMode(mode);
+        //解析java类型
         Class<?> javaTypeClass = resolveClass(javaType);
+        //解析数据库字段类型
         JdbcType jdbcTypeEnum = resolveJdbcType(jdbcType);
+        //类型处理器
         Class<? extends TypeHandler<?>> typeHandlerClass = resolveClass(typeHandler);
+        //参数映射，此过程主要是创建映射对象，并将其放入到配置对象的参数映射集合中
         ParameterMapping parameterMapping = builderAssistant.buildParameterMapping(parameterClass, property, javaTypeClass, jdbcTypeEnum, resultMap, modeEnum, typeHandlerClass, numericScale);
         parameterMappings.add(parameterMapping);
       }
+      //方便下次直接使用
       builderAssistant.addParameterMap(id, parameterClass, parameterMappings);
     }
   }
@@ -419,10 +495,12 @@ public class XMLMapperBuilder extends BaseBuilder {
   }
 
   private void bindMapperForNamespace() {
+    //获取当前的命名空间
     String namespace = builderAssistant.getCurrentNamespace();
     if (namespace != null) {
       Class<?> boundType = null;
       try {
+        //绑定类型，也即是mapper类
         boundType = Resources.classForName(namespace);
       } catch (ClassNotFoundException e) {
         //ignore, bound type is not required
@@ -432,7 +510,9 @@ public class XMLMapperBuilder extends BaseBuilder {
           // Spring may not know the real resource name so we set a flag
           // to prevent loading again this resource from the mapper interface
           // look at MapperAnnotationBuilder#loadXmlResource
+          //增加本地资源
           configuration.addLoadedResource("namespace:" + namespace);
+          //增加Mapper的接口
           configuration.addMapper(boundType);
         }
       }

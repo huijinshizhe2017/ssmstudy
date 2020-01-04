@@ -35,11 +35,23 @@ import org.apache.ibatis.io.Resources;
 /**
  * @author Clinton Begin
  * @author Eduardo Macarron
+ * 非池的数据源
  */
 public class UnpooledDataSource implements DataSource {
 
+  /**
+   * 驱动类加载器
+   */
   private ClassLoader driverClassLoader;
+
+  /**
+   * 驱动属性
+   */
   private Properties driverProperties;
+
+  /**
+   * 注册的驱动
+   */
   private static Map<String, Driver> registeredDrivers = new ConcurrentHashMap<>();
 
   private String driver;
@@ -47,8 +59,19 @@ public class UnpooledDataSource implements DataSource {
   private String username;
   private String password;
 
+  /**
+   * 是否自动提交
+   */
   private Boolean autoCommit;
+
+  /**
+   * 事务的隔离级别
+   */
   private Integer defaultTransactionIsolationLevel;
+
+  /**
+   * 默认的超时时间
+   */
   private Integer defaultNetworkTimeout;
 
   static {
@@ -223,6 +246,10 @@ public class UnpooledDataSource implements DataSource {
     return connection;
   }
 
+  /**
+   * 初始化驱动程序
+   * @throws SQLException
+   */
   private synchronized void initializeDriver() throws SQLException {
     if (!registeredDrivers.containsKey(driver)) {
       Class<?> driverType;
@@ -243,6 +270,11 @@ public class UnpooledDataSource implements DataSource {
     }
   }
 
+  /**
+   * 配置连接，采用单例的线程池
+   * @param conn
+   * @throws SQLException
+   */
   private void configureConnection(Connection conn) throws SQLException {
     if (defaultNetworkTimeout != null) {
       conn.setNetworkTimeout(Executors.newSingleThreadExecutor(), defaultNetworkTimeout);

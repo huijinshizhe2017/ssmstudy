@@ -19,6 +19,7 @@ import java.lang.reflect.Method;
 
 /**
  * @author Eduardo Macarron
+ * 方法解析器
  */
 public class MethodResolver {
   private final MapperAnnotationBuilder annotationBuilder;

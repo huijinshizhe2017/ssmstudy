@@ -21,6 +21,7 @@ import org.apache.ibatis.transaction.TransactionFactory;
 
 /**
  * @author Clinton Begin
+ * 环境中包含事务工厂和数据源，当然还有数据源配置的ID，比如开发环境或者线上环境
  */
 public final class Environment {
   private final String id;

@@ -29,11 +29,12 @@ import org.springframework.transaction.TransactionException;
 
 /**
  * Default exception translator.
- *
+ * 默认异常翻译器。
  * Translates MyBatis SqlSession returned exception into a Spring {@code DataAccessException} using Spring's
  * {@code SQLExceptionTranslator} Can load {@code SQLExceptionTranslator} eagerly or when the first exception is
  * translated.
- *
+ * 使用Spring的将MyBatis SqlSession返回的异常转换为Spring {@code DataAccessException}
+ *  {@code SQLExceptionTranslator}可以急于或在翻译第一个异常时加载{@code SQLExceptionTranslator}。
  * @author Eduardo Macarron
  */
 public class MyBatisExceptionTranslator implements PersistenceExceptionTranslator {

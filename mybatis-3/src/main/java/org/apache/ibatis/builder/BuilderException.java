@@ -19,6 +19,7 @@ import org.apache.ibatis.exceptions.PersistenceException;
 
 /**
  * @author Clinton Begin
+ * 构建异常
  */
 public class BuilderException extends PersistenceException {
 

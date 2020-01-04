@@ -9,7 +9,7 @@ import java.util.List;
 
 /**
  * mybastis
- * cn.surpass.customdao.dao.impl
+ * cn.surpass.customdao.paras.impl
  *
  * @author surpass
  * @date 2019/8/12
@@ -26,7 +26,7 @@ public class UserDaoImpl implements IUserDao {
     @Override
     public List<User> findAll() {
         SqlSession sqlSession = factory.openSession();
-        List<User> users = sqlSession.selectList("cn.surpass.customdao.dao.IUserDao.findAll");
+        List<User> users = sqlSession.selectList("cn.surpass.customdao.paras.IUserDao.findAll");
         sqlSession.close();
         return users;
     }
@@ -34,7 +34,7 @@ public class UserDaoImpl implements IUserDao {
     @Override
     public void saveUser(User user) {
         SqlSession sqlSession = factory.openSession();
-        sqlSession.insert("cn.surpass.customdao.dao.IUserDao.saveUser",user);
+        sqlSession.insert("cn.surpass.customdao.paras.IUserDao.saveUser",user);
         sqlSession.commit();
         sqlSession.close();
 
@@ -43,7 +43,7 @@ public class UserDaoImpl implements IUserDao {
     @Override
     public void updateUser(User user) {
         SqlSession sqlSession = factory.openSession();
-        sqlSession.insert("cn.surpass.customdao.dao.IUserDao.updateUser",user);
+        sqlSession.insert("cn.surpass.customdao.paras.IUserDao.updateUser",user);
         sqlSession.commit();
         sqlSession.close();
 
@@ -52,7 +52,7 @@ public class UserDaoImpl implements IUserDao {
     @Override
     public void deleteUser(Integer id) {
         SqlSession sqlSession = factory.openSession();
-        sqlSession.delete("cn.surpass.customdao.dao.IUserDao.deleteUser",id);
+        sqlSession.delete("cn.surpass.customdao.paras.IUserDao.deleteUser",id);
         sqlSession.commit();
         sqlSession.close();
 
@@ -61,7 +61,7 @@ public class UserDaoImpl implements IUserDao {
     @Override
     public User findUserById(Integer id) {
         SqlSession sqlSession = factory.openSession();
-        User user = sqlSession.selectOne("cn.surpass.customdao.dao.IUserDao.findAll",id);
+        User user = sqlSession.selectOne("cn.surpass.customdao.paras.IUserDao.findAll",id);
         sqlSession.close();
         return user;
     }

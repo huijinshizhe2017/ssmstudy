@@ -34,6 +34,7 @@ import org.apache.ibatis.type.TypeHandlerRegistry;
 
 /**
  * @author Clinton Begin
+ * Sql运行
  */
 public class SqlRunner {
 
@@ -54,7 +55,7 @@ public class SqlRunner {
 
   /**
    * Executes a SELECT statement that returns one row.
-   *
+   * 执行一个SELECT语句，该语句返回一行。
    * @param sql  The SQL
    * @param args The arguments to be set on the statement.
    * @return The row expected.
@@ -70,7 +71,7 @@ public class SqlRunner {
 
   /**
    * Executes a SELECT statement that returns multiple rows.
-   *
+   * 执行一个SELECT语句，返回多行。
    * @param sql  The SQL
    * @param args The arguments to be set on the statement.
    * @return The list of rows expected.

@@ -37,6 +37,7 @@ import org.apache.ibatis.type.JdbcType;
 
 /**
  * @author Clinton Begin
+ * CallableStatement来执行SQL语句，当然它执行的是存储过程。
  */
 public class CallableStatementHandler extends BaseStatementHandler {
 
@@ -46,6 +47,7 @@ public class CallableStatementHandler extends BaseStatementHandler {
 
   @Override
   public int update(Statement statement) throws SQLException {
+    //用来调用存储过程,它提供了对输出和输入/输出参数的支持
     CallableStatement cs = (CallableStatement) statement;
     cs.execute();
     int rows = cs.getUpdateCount();
@@ -92,6 +94,7 @@ public class CallableStatementHandler extends BaseStatementHandler {
 
   @Override
   public void parameterize(Statement statement) throws SQLException {
+    //注册out参数
     registerOutputParameters((CallableStatement) statement);
     parameterHandler.setParameters((CallableStatement) statement);
   }
@@ -100,6 +103,7 @@ public class CallableStatementHandler extends BaseStatementHandler {
     List<ParameterMapping> parameterMappings = boundSql.getParameterMappings();
     for (int i = 0, n = parameterMappings.size(); i < n; i++) {
       ParameterMapping parameterMapping = parameterMappings.get(i);
+      //处理存储过程的INOUT和OUT
       if (parameterMapping.getMode() == ParameterMode.OUT || parameterMapping.getMode() == ParameterMode.INOUT) {
         if (null == parameterMapping.getJdbcType()) {
           throw new ExecutorException("The JDBC Type must be specified for output parameter.  Parameter: " + parameterMapping.getProperty());

@@ -23,7 +23,7 @@ package org.apache.ibatis.mapping;
 public enum StatementType {
 
   /**
-   *Statement接口提供了执行语句和获取结果的基本方法；
+   * Statement接口提供了执行语句和获取结果的基本方法；
    * {@link java.sql.Statement}
    */
   STATEMENT,

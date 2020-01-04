@@ -2,6 +2,7 @@ package cn.surpass.anno.dao;
 
 
 import cn.surpass.domain.User;
+import org.apache.ibatis.annotations.Lang;
 import org.apache.ibatis.annotations.Select;
 
 import java.util.List;

@@ -40,13 +40,22 @@ public class MapperRegistry {
     this.config = config;
   }
 
+  /**
+   * 这里涉及到Mapper对象的代理类生成
+   * @param type
+   * @param sqlSession
+   * @param <T>
+   * @return
+   */
   @SuppressWarnings("unchecked")
   public <T> T getMapper(Class<T> type, SqlSession sqlSession) {
     final MapperProxyFactory<T> mapperProxyFactory = (MapperProxyFactory<T>) knownMappers.get(type);
+    //如果Mapper的代理工厂为空，则抛出异常
     if (mapperProxyFactory == null) {
       throw new BindingException("Type " + type + " is not known to the MapperRegistry.");
     }
     try {
+      //通过代理工厂生成mapper的实例，这里需要传入session对象
       return mapperProxyFactory.newInstance(sqlSession);
     } catch (Exception e) {
       throw new BindingException("Error getting mapper instance. Cause: " + e, e);
@@ -64,10 +73,12 @@ public class MapperRegistry {
       }
       boolean loadCompleted = false;
       try {
+        //这里为什么先要放进去，没有成功移除。为什么不在最终在添加进去
         knownMappers.put(type, new MapperProxyFactory<>(type));
         // It's important that the type is added before the parser is run
         // otherwise the binding may automatically be attempted by the
         // mapper parser. If the type is already known, it won't try.
+        //重要的是在运行解析器之前添加类型，否则映射器解析器可能会自动尝试绑定。如果类型是已知的，则不会尝试。
         MapperAnnotationBuilder parser = new MapperAnnotationBuilder(config, type);
         parser.parse();
         loadCompleted = true;

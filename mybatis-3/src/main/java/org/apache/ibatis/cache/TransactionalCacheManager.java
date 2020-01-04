@@ -22,6 +22,7 @@ import org.apache.ibatis.cache.decorators.TransactionalCache;
 
 /**
  * @author Clinton Begin
+ * 事务缓存管理器
  */
 public class TransactionalCacheManager {
 
@@ -51,6 +52,11 @@ public class TransactionalCacheManager {
     }
   }
 
+  /**
+   * 获取事务缓存
+   * @param cache
+   * @return
+   */
   private TransactionalCache getTransactionalCache(Cache cache) {
     return transactionalCaches.computeIfAbsent(cache, TransactionalCache::new);
   }

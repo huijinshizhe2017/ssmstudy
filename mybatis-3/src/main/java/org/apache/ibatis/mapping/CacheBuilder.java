@@ -106,6 +106,11 @@ public class CacheBuilder {
     return cache;
   }
 
+  /**
+   * 这里要指定缓存的类型以及缓存的回收策略
+   * implementation:设置缓存的类型，如果为null，则为{@link PerpetualCache}
+   * decorators:添加缓存回收策略
+   */
   private void setDefaultImplementations() {
     if (implementation == null) {
       implementation = PerpetualCache.class;
@@ -115,21 +120,36 @@ public class CacheBuilder {
     }
   }
 
+  /**
+   * 设置标准的装饰者缓存
+   * @param cache
+   * @return
+   */
   private Cache setStandardDecorators(Cache cache) {
     try {
       MetaObject metaCache = SystemMetaObject.forObject(cache);
       if (size != null && metaCache.hasSetter("size")) {
         metaCache.setValue("size", size);
       }
+      //这里是装饰者模式的应用，但是变量按照委派的方式命名
       if (clearInterval != null) {
+        //创建缓冲策略
+        //设置清除间隔
         cache = new ScheduledCache(cache);
         ((ScheduledCache) cache).setClearInterval(clearInterval);
       }
+      //可读写
+      //可读可写，需要序列化缓存
       if (readWrite) {
         cache = new SerializedCache(cache);
       }
+      //日志缓存
       cache = new LoggingCache(cache);
+      //同步缓存，增加同步代码块
       cache = new SynchronizedCache(cache);
+
+      //阻塞缓存
+      //这里用到了ReentrantLock
       if (blocking) {
         cache = new BlockingCache(cache);
       }
@@ -176,6 +196,7 @@ public class CacheBuilder {
         }
       }
     }
+    //可初始化对象
     if (InitializingObject.class.isAssignableFrom(cache.getClass())) {
       try {
         ((InitializingObject) cache).initialize();

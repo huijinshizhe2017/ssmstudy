@@ -30,6 +30,7 @@ import org.apache.ibatis.type.JdbcType;
 
 /**
  * @author Clinton Begin
+ * Sql源构建器
  */
 public class SqlSourceBuilder extends BaseBuilder {
 

@@ -20,7 +20,7 @@ import org.mybatis.spring.sample.domain.User;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * BarService simply receives a userId and uses a dao to get a record from the database.
+ * BarService simply receives a userId and uses a paras to get a record from the database.
  */
 @Transactional
 public class BarService {

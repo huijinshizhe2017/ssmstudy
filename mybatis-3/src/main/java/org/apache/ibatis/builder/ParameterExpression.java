@@ -19,6 +19,7 @@ import java.util.HashMap;
 
 /**
  * Inline parameter expression parser. Supported grammar (simplified):
+ * 内联参数表达式解析器。支持的语法（简体）：
  *
  * <pre>
  * inline-parameter = (propertyName | expression) oldJdbcType attributes
@@ -28,6 +29,20 @@ import java.util.HashMap;
  * attributes = (',' attribute)*
  * attribute = name '=' value
  * </pre>
+ *
+ * 这里处理的问题是:
+ * 1.(a.b):c,d=e,f=g
+ * 输出:expression=>a.b
+ *      jdbcType=>c
+ *      d=>e
+ *      f=>g
+ * --------------------------
+ * 2./a.b/:c,d=e,f=g
+ * 输出:jdbcType=>c
+ *      d=>e
+ *      f=>g
+ *      property=>/a.b/
+ *
  *
  * @author Frank D. Martinez [mnesarco]
  */
@@ -39,8 +54,14 @@ public class ParameterExpression extends HashMap<String, String> {
     parse(expression);
   }
 
+  /**
+   * 解析表达式
+   * @param expression
+   */
   private void parse(String expression) {
+    //找到一个非空白字符
     int p = skipWS(expression, 0);
+    //如果以"("开始，则需要解析表达式
     if (expression.charAt(p) == '(') {
       expression(expression, p + 1);
     } else {
@@ -48,10 +69,18 @@ public class ParameterExpression extends HashMap<String, String> {
     }
   }
 
+  /**
+   * 解析以括号开头的表达式
+   * @param expression
+   * @param left
+   */
   private void expression(String expression, int left) {
     int match = 1;
     int right = left + 1;
+    //当找到与开始"("括号匹配的")"则跳出循环
+    //此时表达式为两个括号之间的内容。
     while (match > 0) {
+      //如果存在
       if (expression.charAt(right) == ')') {
         match--;
       } else if (expression.charAt(right) == '(') {
@@ -71,6 +100,14 @@ public class ParameterExpression extends HashMap<String, String> {
     }
   }
 
+  /**
+   * 从第几个字符跳过空白字符
+   * WS:while space
+   * 0x20的十进制数为:32
+   * @param expression
+   * @param p
+   * @return
+   */
   private int skipWS(String expression, int p) {
     for (int i = p; i < expression.length(); i++) {
       if (expression.charAt(i) > 0x20) {

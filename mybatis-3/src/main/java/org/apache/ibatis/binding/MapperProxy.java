@@ -94,10 +94,19 @@ public class MapperProxy<T> implements InvocationHandler, Serializable {
   }
 
   private MapperMethod cachedMapperMethod(Method method) {
+    //Map的computeIfAbsent是一个默认的方法。如果没有则创建，如果有则返回
     return methodCache.computeIfAbsent(method,
         k -> new MapperMethod(mapperInterface, method, sqlSession.getConfiguration()));
   }
 
+  /**
+   * java9的反射
+   * @param proxy
+   * @param method
+   * @param args
+   * @return
+   * @throws Throwable
+   */
   private Object invokeDefaultMethodJava9(Object proxy, Method method, Object[] args)
       throws Throwable {
     final Class<?> declaringClass = method.getDeclaringClass();
@@ -107,6 +116,14 @@ public class MapperProxy<T> implements InvocationHandler, Serializable {
         .bindTo(proxy).invokeWithArguments(args);
   }
 
+  /**
+   * java8的执行
+   * @param proxy
+   * @param method
+   * @param args
+   * @return
+   * @throws Throwable
+   */
   private Object invokeDefaultMethodJava8(Object proxy, Method method, Object[] args)
       throws Throwable {
     final Class<?> declaringClass = method.getDeclaringClass();

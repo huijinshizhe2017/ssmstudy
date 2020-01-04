@@ -19,6 +19,7 @@ import org.apache.ibatis.exceptions.PersistenceException;
 
 /**
  * @author Clinton Begin
+ * 绑定异常
  */
 public class BindingException extends PersistenceException {
 

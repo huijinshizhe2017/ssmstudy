@@ -45,18 +45,28 @@ import org.springframework.util.StringUtils;
  * BeanDefinitionRegistryPostProcessor that searches recursively starting from a base package for interfaces and
  * registers them as {@code MapperFactoryBean}. Note that only interfaces with at least one method will be registered;
  * concrete classes will be ignored.
+ * BeanDefinitionRegistryPostProcessor，它从基本包开始递归搜索接口，并将其注册为{@code MapperFactoryBean}。
+ * 请注意，只有具有至少一种方法的接口才会被注册；具体的类将被忽略。
  * <p>
  * This class was a {code BeanFactoryPostProcessor} until 1.0.1 version. It changed to
  * {@code BeanDefinitionRegistryPostProcessor} in 1.0.2. See https://jira.springsource.org/browse/SPR-8269 for the
  * details.
+ * 直到1.0.1版本，该类才是{code BeanFactoryPostProcessor}。
+ * 在1.0.2中，它更改为{@code BeanDefinitionRegistryPostProcessor}。
+ * 有关详细信息，请参见https://jira.springsource.org/browse/SPR-8269。
  * <p>
  * The {@code basePackage} property can contain more than one package name, separated by either commas or semicolons.
+ * {@code basePackage}属性可以包含多个软件包名称，以逗号或分号分隔。
  * <p>
  * This class supports filtering the mappers created by either specifying a marker interface or an annotation. The
  * {@code annotationClass} property specifies an annotation to search for. The {@code markerInterface} property
  * specifies a parent interface to search for. If both properties are specified, mappers are added for interfaces that
  * match <em>either</em> criteria. By default, these two properties are null, so all interfaces in the given
  * {@code basePackage} are added as mappers.
+ * 此类支持过滤通过指定标记接口或注释创建的映射器。 {@code注记类}属性指定要搜索的注解。
+ * {@code markerInterface}属性指定要搜索的父接口。如果同时指定了这两个属性，
+ * 则将为符合<em>或</ em>条件的接口添加映射器。默认情况下，这两个属性为null，
+ * 因此给定{@code basePackage}中的所有接口都作为映射器添加。
  * <p>
  * This configurer enables autowire for all the beans that it creates so that they are automatically autowired with the
  * proper {@code SqlSessionFactory} or {@code SqlSessionTemplate}. If there is more than one {@code SqlSessionFactory}
@@ -65,11 +75,20 @@ import org.springframework.util.StringUtils;
  * are used rather than actual objects because Spring does not initialize property placeholders until after this class
  * is processed.
  * <p>
+ * 此配置程序为它创建的所有bean启用自动装配，以便使用正确的{@code SqlSessionFactory}
+ * 或{@code SqlSessionTemplate}自动装配它们。但是，如果应用程序中有多个{@code SqlSessionFactory}，
+ * 则不能使用自动装配。在这种情况下，您必须通过bean名称属性明确指定要使用的{@code SqlSessionFactory}
+ * 或{@code SqlSessionTemplate}。使用Bean名称而不是实际对象，因为Spring在处理此类之后才初始化属性占位符。
+ *
  * Passing in an actual object which may require placeholders (i.e. DB user password) will fail. Using bean names defers
  * actual object creation until later in the startup process, after all placeholder substitution is completed. However,
  * note that this configurer does support property placeholders of its <em>own</em> properties. The
  * <code>basePackage</code> and bean name properties all support <code>${property}</code> style substitution.
  * <p>
+ *  传递可能需要占位符（即DB用户密码）的实际对象将失败。
+ *  在所有占位符替换完成之后，使用Bean名称将实际对象的创建推迟到启动过程的后期。
+ *  但是，请注意，此配置程序确实支持其<em> own </ em>属性的属性占位符。
+ *  <code> basePackage </ code>和bean名称属性均支持<code> $ {property} </ code>样式替换。
  * Configuration sample:
  *
  * <pre class="code">
@@ -121,10 +140,13 @@ public class MapperScannerConfigurer
 
   /**
    * This property lets you set the base package for your mapper interface files.
+   * 该属性使您可以为映射器界面文件设置基本包。
    * <p>
    * You can set more than one package by using a semicolon or comma as a separator.
    * <p>
+   *     您可以使用分号或逗号作为分隔符来设置多个软件包。
    * Mappers will be searched for recursively starting in the specified package(s).
+   * 将从指定的包开始递归搜索映射器。
    *
    * @param basePackage
    *          base package name

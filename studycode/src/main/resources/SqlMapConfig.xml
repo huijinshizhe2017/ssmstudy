@@ -44,12 +44,15 @@
         <package name="cn.surpass.manyone.dao"/>
         <package name="cn.surpass.lazy.dao"/>
         <package name="cn.surpass.cache.dao"/>
-        <!--<mapper class="cn.surpass.xml.dao.IUserDao"/>-->
-        <!--<mapper resource="cn/surpass/xml/dao/IUserDao.xml"/>-->
-        <!--<mapper resource="cn/surpass/customdao/dao/IUserDao.xml"/>-->
-        <!--<mapper class="cn.surpass.anno.dao.IUserDao"/>-->
-        <!--<mapper resource="cn/surpass/curd/dao/IUserDao.xml"/>-->
-        <!--<mapper resource="cn/surpass/result/dao/IUserDao.xml"/>-->
+        <package name="cn.surpass.paras.dao"/>
+
+
+        <!--<mapper class="cn.surpass.xml.paras.IUserDao"/>-->
+        <!--<mapper resource="cn/surpass/xml/paras/IUserDao.xml"/>-->
+        <!--<mapper resource="cn/surpass/customdao/paras/IUserDao.xml"/>-->
+        <!--<mapper class="cn.surpass.anno.paras.IUserDao"/>-->
+        <!--<mapper resource="cn/surpass/curd/paras/IUserDao.xml"/>-->
+        <!--<mapper resource="cn/surpass/result/paras/IUserDao.xml"/>-->
 
 
     </mappers>

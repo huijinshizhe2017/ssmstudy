@@ -85,6 +85,7 @@ public class SqlSessionFactoryBuilder {
       XMLConfigBuilder parser = new XMLConfigBuilder(inputStream, environment, properties);
       //构建SqlSessionFactory
       //parser.parse()实现对于Configuration的封装
+      //build就简单了，直接将配置对象放入DefaultSqlSessionFactory中
       return build(parser.parse());
     } catch (Exception e) {
       throw ExceptionFactory.wrapException("Error building SqlSession.", e);

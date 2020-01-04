@@ -469,31 +469,51 @@ public class XMLConfigBuilder extends BaseBuilder {
   }
 
   /**
-   * 映射文件解析
+   * 映射文件解析(Mapper文件解析)
+   * 这里有两种形式进行解析:mapper和package
    * @param parent
    * @throws Exception
    */
   private void mapperElement(XNode parent) throws Exception {
     if (parent != null) {
       for (XNode child : parent.getChildren()) {
+        //package标签解析，会解析name包名下所有的mapper文件，并且增加到配置对象的mapper集合中
+        //注意:这个增加的是mapper的接口类，不是mapper配置文件
+        //这里走的是注解形式解析
         if ("package".equals(child.getName())) {
           String mapperPackage = child.getStringAttribute("name");
           configuration.addMappers(mapperPackage);
         } else {
+          //这里同样url、resource和class不能共存不能共存
           String resource = child.getStringAttribute("resource");
           String url = child.getStringAttribute("url");
           String mapperClass = child.getStringAttribute("class");
+          /*
+           * 这里判断有三个分支和一个异常处理
+           * 1.resource不为空，其他为空;xml->接口
+           * 2.url不为空，其他为空；xml->接口
+           * 3.class不为空，其他为空；接口->xml或者注解
+           * 4.异常处理，包括都为空或者有多于两个不为空
+           */
           if (resource != null && url == null && mapperClass == null) {
+            //追加日志信息
             ErrorContext.instance().resource(resource);
             InputStream inputStream = Resources.getResourceAsStream(resource);
+            //构造Mapper的Xml构造器,包括mapper文件的输入流、配置对象、资源路径、sql骨架
+            //Xmlmapper解析
             XMLMapperBuilder mapperParser = new XMLMapperBuilder(inputStream, configuration, resource, configuration.getSqlFragments());
+            //mapper文件解析
             mapperParser.parse();
           } else if (resource == null && url != null && mapperClass == null) {
             ErrorContext.instance().resource(url);
             InputStream inputStream = Resources.getUrlAsStream(url);
+            //Xmlmapper解析
             XMLMapperBuilder mapperParser = new XMLMapperBuilder(inputStream, configuration, url, configuration.getSqlFragments());
             mapperParser.parse();
+
+            //这里区别于其他两种情况，通过制定类去创建mapper
           } else if (resource == null && url == null && mapperClass != null) {
+            //注解方式解析
             Class<?> mapperInterface = Resources.classForName(mapperClass);
             configuration.addMapper(mapperInterface);
           } else {

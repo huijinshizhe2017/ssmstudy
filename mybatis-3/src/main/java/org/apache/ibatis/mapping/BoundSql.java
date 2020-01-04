@@ -30,7 +30,10 @@ import org.apache.ibatis.session.Configuration;
  * the value from).
  * <p>
  * Can also have additional parameters that are created by the dynamic language (for loops, bind...).
- *
+ * 处理任何动态内容后，从{@link SqlSource}获取的实际SQL字符串。
+ * SQL可能具有SQL占位符“？”以及参数映射的列表（有序）以及每个参数的附加信息
+ * （至少是从中读取值的输入对象的属性名称）。
+ * 还可以包含由动态语言创建的附加参数（用于循环，绑定...）。
  * @author Clinton Begin
  */
 public class BoundSql {

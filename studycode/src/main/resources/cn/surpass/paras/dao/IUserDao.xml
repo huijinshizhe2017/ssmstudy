@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.surpass.paras.dao.IUserDao">
+
+    <select id="findUsersByIdsAndSex1" resultType="cn.surpass.domain.User">
+        select * from user
+        where id in
+        <foreach collection="arg0" item="item" index="index" separator="," open="(" close=")">
+            #{item}
+        </foreach>
+        and sex = #{arg1}
+    </select>
+
+    <select id="findUsersByIdsAndSex2" resultType="cn.surpass.domain.User">
+        select * from user
+        where id in
+        <foreach collection="ids" item="item" index="index" separator="," open="(" close=")">
+            #{item}
+        </foreach>
+        and sex = #{sex}
+    </select>
+
+    <select id="findUsersByIdsAndSex3" resultType="cn.surpass.domain.User">
+        select * from user
+        where id in
+        <foreach collection="ids" item="item" index="index" separator="," open="(" close=")">
+            #{item}
+        </foreach>
+        and sex = #{sex}
+    </select>
+
+    <select id="findUsersByIdsAndSex4" resultType="cn.surpass.domain.User">
+        select * from user
+        where id = #{id} and sex = #{sex}
+    </select>
+
+</mapper>

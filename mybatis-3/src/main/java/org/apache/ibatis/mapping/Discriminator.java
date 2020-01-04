@@ -26,6 +26,10 @@ import org.apache.ibatis.session.Configuration;
 public class Discriminator {
 
   private ResultMapping resultMapping;
+
+  /**
+   * 判别器
+   */
   private Map<String, String> discriminatorMap;
 
   Discriminator() {

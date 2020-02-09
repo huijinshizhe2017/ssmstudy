@@ -101,7 +101,7 @@ public class CacheKey implements Cloneable, Serializable {
   }
 
   /**
-   * 所有的一致了才算是相等:包括类型、hashcode\checksum\count\updateList
+   * 所有的一致了才算是相等:包括类型、hashcode|checksum|count|updateList
    * @param object
    * @return
    */

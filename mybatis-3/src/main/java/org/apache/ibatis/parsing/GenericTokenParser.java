@@ -25,6 +25,12 @@ public class GenericTokenParser {
   private final String closeToken;
   private final TokenHandler handler;
 
+  /**
+   * Token解析器
+   * @param openToken  起始分隔符 如果是#{},则openToken为#{,如果是${},则openToken为${
+   * @param closeToken 终结分隔符 为}
+   * @param handler 处理器
+   */
   public GenericTokenParser(String openToken, String closeToken, TokenHandler handler) {
     this.openToken = openToken;
     this.closeToken = closeToken;

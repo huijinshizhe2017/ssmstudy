@@ -42,7 +42,7 @@ public abstract class SqlSessionDaoSupport extends DaoSupport {
   private SqlSessionTemplate sqlSessionTemplate;
 
   /**
-   * Set MyBatis SqlSessionFactory to be used by this DAO. Will automatically create SqlSessionTemplate for the given
+   * Set MyBatis SqlSessionFactory to be used by this dao. Will automatically create SqlSessionTemplate for the given
    * SqlSessionFactory.
    * 设置要由该DAO使用的MyBatis SqlSessionFactory。将自动为给定的SqlSessionFactory创建SqlSessionTemplate。
    *
@@ -56,7 +56,7 @@ public abstract class SqlSessionDaoSupport extends DaoSupport {
   }
 
   /**
-   * Create a SqlSessionTemplate for the given SqlSessionFactory. Only invoked if populating the DAO with a
+   * Create a SqlSessionTemplate for the given SqlSessionFactory. Only invoked if populating the dao with a
    * SqlSessionFactory reference!
    * 为给定的SqlSessionFactory创建一个SqlSessionTemplate。仅在使用SqlSessionFactory引用填充DAO时调用！
    * <p>
@@ -75,7 +75,7 @@ public abstract class SqlSessionDaoSupport extends DaoSupport {
   }
 
   /**
-   * Return the MyBatis SqlSessionFactory used by this DAO.
+   * Return the MyBatis SqlSessionFactory used by this dao.
    *
    * @return a factory of SqlSession
    */
@@ -84,7 +84,7 @@ public abstract class SqlSessionDaoSupport extends DaoSupport {
   }
 
   /**
-   * Set the SqlSessionTemplate for this DAO explicitly, as an alternative to specifying a SqlSessionFactory.
+   * Set the SqlSessionTemplate for this dao explicitly, as an alternative to specifying a SqlSessionFactory.
    * 显式设置此DAO的SqlSessionTemplate，作为指定SqlSessionFactory的替代方法。
    * @param sqlSessionTemplate
    *          a template of SqlSession
@@ -106,7 +106,7 @@ public abstract class SqlSessionDaoSupport extends DaoSupport {
   }
 
   /**
-   * Return the SqlSessionTemplate for this DAO, pre-initialized with the SessionFactory or set explicitly.
+   * Return the SqlSessionTemplate for this dao, pre-initialized with the SessionFactory or set explicitly.
    * 返回此DAO的SqlSessionTemplate，并使用SessionFactory对其进行预先初始化或进行显式设置。
    * <p>
    * <b>Note: The returned SqlSessionTemplate is a shared instance.</b> You may introspect its configuration, but not

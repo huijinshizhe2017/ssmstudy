@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.surpass.skill.dao.UserDao">
+    <select id="queryUserById" resultType="user">
+        SELECT * FROM USER WHERE ID = #{fdkfalf}
+    </select>
+
+    <select id="queryUserByAddressAndSex" resultType="user">
+        SELECT * FROM USER WHERE ADDRESS = #{address} AND SEX = #{sex}
+    </select>
+
+    <select id="queryUserByUserAddressAndSex" parameterType="user" resultType="user">
+        SELECT * FROM USER WHERE ADDRESS = #{address} AND SEX = #{sex}
+    </select>
+
+    <select id="queryUserByUserTempAddressAndSex" parameterType="cn.surpass.domain.UserTemp" resultType="cn.surpass.domain.UserTemp">
+        SELECT * FROM USER WHERE ADDRESS = #{address} AND SEX = #{sex}
+    </select>
+
+    <select id="queryUserByMapWithAddressAndSex" resultType="user">
+        SELECT * FROM USER WHERE ADDRESS = #{address} AND SEX = #{sex}
+    </select>
+
+    <select id="queryUserWithTableName" resultType="user">
+        SELECT * FROM ${tableName}
+    </select>
+
+    <select id="queryUserByMapWithTableName" resultType="user">
+        SELECT * FROM ${tableName}
+    </select>
+
+    <select id="queryByUserName" resultType="user">
+        SELECT * FROM USER
+        <where>
+            <if test="value != null">
+                and USERNAME LIKE #{value}
+            </if>
+        </where>
+    </select>
+
+    <delete id="deleteUserByName" parameterType="string">
+        delete from USER where 1 = 1
+        <if test="name != null">
+            and like #{value}
+        </if>
+    </delete>
+
+    <select id="queryUsersByNameOrSex" resultType="user">
+        select * from USER where 1 = 1
+        <choose>
+            <when test="name != null">
+                and USERNAME like #{name}
+            </when>
+            <when test="sex != null">
+                and sex = #{sex}
+            </when>
+        </choose>
+    </select>
+
+
+    <update id="updateUsersById" parameterType="user">
+        update USER
+        <set>
+            <if test="username != null">
+                USERNAME = #{username},
+            </if>
+            <if test="sex != null">
+                SEX = #{sex},
+            </if>
+            <if test="address != null">
+                ADDRESS = #{address},
+            </if>
+        </set>
+        where ID = #{id}
+    </update>
+
+
+    <select id="queryAll" resultType="user">
+        SELECT * FROM USER
+        <trim prefix="order by" suffixOverrides=",">
+            <if test="col1 != null">
+                ${col1},
+            </if>
+            <if test="col2 != null">
+                ${col2},
+            </if>
+        </trim>
+    </select>
+
+
+    <select id="queryUserByIds" resultType="user">
+        SELECT * FROM USER
+        WHERE ID in
+          <foreach item="item" index="index" collection="ids"
+                     open="(" separator="," close=")">
+              #{item}
+          </foreach>
+    </select>
+
+
+
+
+</mapper>
+

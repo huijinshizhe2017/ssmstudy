@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.surpass.skill.dao.PinDao">
+
+
+    <resultMap id="idsPin" type="cn.surpass.skill.dao.PinDao">
+        <result column="ID" property="id" />
+        <result column="TYPE" property="type"/>
+        <association property="conn" javaType="cn.surpass.skill.model.IdsConnector">
+            <result column="CONN_ID" property="id"/>
+        </association>
+    </resultMap>
+
+    <insert id="insertPin" parameterType="cn.surpass.skill.model.IdsPin">
+        INSERT INTO IDS_PIN(CONN_ID,PIN_CODE,TYPE) VALUES(#{conn.id},#{pinCode},#{type})
+    </insert>
+
+    <select id="queryPin" resultMap="idsPin">
+        select ID,CONN_ID,TYPE FROM IDS_PIN
+    </select>
+
+
+</mapper>

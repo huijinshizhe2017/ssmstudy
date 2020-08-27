@@ -18,7 +18,7 @@
 -->
 <!--
     A sample context that shows how to integrate MyBatis with Spring using
-    a hand-coded DAO implementation.
+    a hand-coded dao implementation.
 -->
 <beans xmlns="http://www.springframework.org/schema/beans"
      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -33,7 +33,7 @@
       <constructor-arg value="org.mybatis.spring.sample.mapper.UserMapper"/>
     </bean>
 
-    <!-- Classic DAO pattern built with an interface and an implementation. -->
+    <!-- Classic dao pattern built with an interface and an implementation. -->
     <bean id="userDao" class="org.mybatis.spring.sample.dao.UserDaoImpl" autowire="byType" />
 
     <bean id="barService" class="org.mybatis.spring.sample.service.BarService">

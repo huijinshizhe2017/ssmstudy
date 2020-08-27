@@ -49,7 +49,7 @@
         <!-- Directly specify the location of the MyBatis mapper xml file. This
              is NOT required when using MapperScannerConfigurer or
              MapperFactoryBean; they will load the xml automatically if it is
-             in the same classpath location as the DAO interface. Rather than
+             in the same classpath location as the dao interface. Rather than
              directly referencing the xml files, the 'configLocation' property
              could also be used to specify the location of a MyBatis config
              file. This config file could, in turn, contain &ltmapper&gt

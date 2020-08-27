@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.surpass.skill.dao.IdDao">
+    <select id="queryIdByType" parameterType="string" resultType="string">
+        select ID FROM ID_TABLE WHERE TYPE = #{VALUE}
+    </select>
+
+    <insert id="insertIdByType" parameterType="cn.surpass.skill.model.IdModel">
+        INSERT INTO ID_TABLE(ID,TYPE) VALUES(#{id},#{type})
+    </insert>
+
+    <update id="updateIdByType" parameterType="cn.surpass.skill.model.IdModel">
+        update ID_TABLE set ID = #{id} WHERE TYPE=#{type}
+    </update>
+
+
+</mapper>

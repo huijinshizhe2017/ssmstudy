@@ -45,6 +45,7 @@
         <package name="cn.surpass.lazy.dao"/>
         <package name="cn.surpass.cache.dao"/>
         <package name="cn.surpass.paras.dao"/>
+        <package name="cn.surpass.skill.dao"/>
 
 
         <!--<mapper class="cn.surpass.xml.paras.IUserDao"/>-->

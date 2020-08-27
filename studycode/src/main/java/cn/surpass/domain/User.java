@@ -19,6 +19,15 @@ public class User implements Serializable {
     private Date birthday;
     private String sex;
     private String address;
+    private String tableName;
+
+    public String getTableName() {
+        return tableName;
+    }
+
+    public void setTableName(String tableName) {
+        this.tableName = tableName;
+    }
 
     public Integer getId() {
         return id;

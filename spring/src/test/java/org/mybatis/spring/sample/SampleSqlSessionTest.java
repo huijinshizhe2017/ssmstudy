@@ -25,7 +25,7 @@ import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * Example of basic MyBatis-Spring integration usage with a manual DAO implementation that subclasses
+ * Example of basic MyBatis-Spring integration usage with a manual dao implementation that subclasses
  * SqlSessionDaoSupport.
  */
 @DirtiesContext

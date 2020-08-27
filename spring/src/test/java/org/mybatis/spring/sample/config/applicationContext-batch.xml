@@ -18,7 +18,7 @@
 -->
 <!--
     A sample context that shows how to integrate MyBatis with Spring using
-    a DAO setup for BATCH transactions.
+    a dao setup for BATCH transactions.
 -->
 <beans xmlns="http://www.springframework.org/schema/beans"
      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
